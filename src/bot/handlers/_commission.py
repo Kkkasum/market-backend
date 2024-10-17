@@ -25,7 +25,7 @@ async def commission_callback(callback: types.CallbackQuery, callback_data: Comm
 
 @router.callback_query(SetCommissionCallbackData.filter())
 async def set_commission_callback(callback: types.CallbackQuery, callback_data: SetCommissionCallbackData, state: FSMContext):
-    m = 'Введите новое значение (в %)'
+    m = 'Введите новое значение (в %, от 0 до 100)'
 
     await callback.message.answer(text=m)
     await state.set_state(callback_data.c)
@@ -51,7 +51,7 @@ async def set_deposit(message: types.Message, state: FSMContext):
 
         await message.answer(text=m)
 
-        await AdminService.set_commission(CommissionType.DEPOSIT, c)
+        await AdminService.set_commission(CommissionType.DEPOSIT, c / 100)
         await state.clear()
 
 
@@ -75,7 +75,7 @@ async def set_withdrawal(message: types.Message, state: FSMContext):
 
         await message.answer(text=m)
 
-        await AdminService.set_commission(CommissionType.WITHDRAWAL, c)
+        await AdminService.set_commission(CommissionType.WITHDRAWAL, c / 100)
         await state.clear()
 
 
@@ -99,7 +99,7 @@ async def set_swap(message: types.Message, state: FSMContext):
 
         await message.answer(text=m)
 
-        await AdminService.set_commission(CommissionType.SWAP, c)
+        await AdminService.set_commission(CommissionType.SWAP, c / 100)
         await state.clear()
 
 
@@ -123,7 +123,7 @@ async def set_buy(message: types.Message, state: FSMContext):
 
         await message.answer(text=m)
 
-        await AdminService.set_commission(CommissionType.BUY, c)
+        await AdminService.set_commission(CommissionType.BUY, c / 100)
         await state.clear()
 
 
@@ -147,5 +147,5 @@ async def set_sell(message: types.Message, state: FSMContext):
 
         await message.answer(text=m)
 
-        await AdminService.set_commission(CommissionType.SELL, c)
+        await AdminService.set_commission(CommissionType.SELL, c / 100)
         await state.clear()
