@@ -1,6 +1,7 @@
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardMarkup
 
+from ._main import MainCallbackData
 from src.service.admin import CommissionType
 
 
@@ -35,8 +36,12 @@ def commission_kb() -> InlineKeyboardMarkup:
         text='Продажа',
         callback_data=CommissionCallbackData(c=CommissionType.SELL)
     )
+    builder.button(
+        text='⬅️ Вернуться',
+        callback_data=MainCallbackData(page='main')
+    )
 
-    builder.adjust(2, 1, 2)
+    builder.adjust(2, 1, 2, 1)
 
     return builder.as_markup()
 
@@ -47,6 +52,10 @@ def com_kb(c: CommissionType) -> InlineKeyboardMarkup:
     builder.button(
         text='Установить новое значение',
         callback_data=SetCommissionCallbackData(c=c)
+    )
+    builder.button(
+        text='⬅️ Вернуться',
+        callback_data=MainCallbackData(page='commission')
     )
 
     return builder.as_markup()

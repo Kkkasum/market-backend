@@ -1,6 +1,8 @@
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardMarkup
 
+from ._main import MainCallbackData
+
 
 class UserCallbackData(CallbackData, prefix='user'):
     page: str
@@ -25,7 +27,11 @@ def user_kb() -> InlineKeyboardMarkup:
         text='Удалить',
         callback_data=UserCallbackData(page='delete')
     )
+    builder.button(
+        text='⬅️ Вернуться',
+        callback_data=MainCallbackData(page='main')
+    )
 
-    builder.adjust(1, 2, 1)
+    builder.adjust(1, 2, 1, 1)
 
     return builder.as_markup()

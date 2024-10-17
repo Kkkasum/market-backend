@@ -2,7 +2,9 @@ from aiogram import Router, types, F
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 
-from src.bot.keyboards import MainCallbackData, CommissionCallbackData, SetCommissionCallbackData, commission_kb, com_kb
+from src.bot.keyboards import (
+    MainCallbackData, CommissionCallbackData, SetCommissionCallbackData, back_kb, commission_kb, com_kb
+)
 from src.service.admin import AdminService, CommissionType
 from src.utils.formatters import format_commission
 
@@ -50,7 +52,7 @@ async def set_deposit(message: types.Message, state: FSMContext):
     else:
         m = 'Новая комиссия установлено'
 
-        await message.answer(text=m)
+        await message.answer(text=m, reply_markup=back_kb(MainCallbackData(page='commission')))
 
         await AdminService.set_commission(CommissionType.DEPOSIT, c / 100)
         await state.clear()
@@ -75,7 +77,7 @@ async def set_withdrawal(message: types.Message, state: FSMContext):
     else:
         m = 'Новая комиссия установлено'
 
-        await message.answer(text=m)
+        await message.answer(text=m, reply_markup=back_kb(MainCallbackData(page='commission')))
 
         await AdminService.set_commission(CommissionType.WITHDRAWAL, c / 100)
         await state.clear()
@@ -100,7 +102,7 @@ async def set_swap(message: types.Message, state: FSMContext):
     else:
         m = 'Новая комиссия установлено'
 
-        await message.answer(text=m)
+        await message.answer(text=m, reply_markup=back_kb(MainCallbackData(page='commission')))
 
         await AdminService.set_commission(CommissionType.SWAP, c / 100)
         await state.clear()
@@ -125,7 +127,7 @@ async def set_buy(message: types.Message, state: FSMContext):
     else:
         m = 'Новая комиссия установлено'
 
-        await message.answer(text=m)
+        await message.answer(text=m, reply_markup=back_kb(MainCallbackData(page='commission')))
 
         await AdminService.set_commission(CommissionType.BUY, c / 100)
         await state.clear()
@@ -150,7 +152,7 @@ async def set_sell(message: types.Message, state: FSMContext):
     else:
         m = 'Новая комиссия установлено'
 
-        await message.answer(text=m)
+        await message.answer(text=m, reply_markup=back_kb(MainCallbackData(page='commission')))
 
         await AdminService.set_commission(CommissionType.SELL, c / 100)
         await state.clear()
