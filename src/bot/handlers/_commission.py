@@ -13,19 +13,19 @@ router = Router()
 async def main_commission_callback(callback: types.CallbackQuery, **_):
     m = 'Выберите комиссию'
 
-    await callback.message.answer(text=m, reply_markup=commission_kb())
+    await callback.message.edit_text(text=m, reply_markup=commission_kb())
 
 
 @router.callback_query(CommissionCallbackData.filter())
 async def commission_callback(callback: types.CallbackQuery, callback_data: CommissionCallbackData):
     c = await AdminService.get_commission(callback_data.c)
 
-    await callback.message.answer(text=format_commission(c), reply_markup=com_kb(callback_data.c))
+    await callback.message.edit_text(text=format_commission(c), reply_markup=com_kb(callback_data.c))
 
 
 @router.callback_query(SetCommissionCallbackData.filter())
 async def set_commission_callback(callback: types.CallbackQuery, callback_data: SetCommissionCallbackData, state: FSMContext):
-    m = 'Введите новое значение'
+    m = 'Введите новое значение (в %)'
 
     await callback.message.answer(text=m)
     await state.set_state(callback_data.c)
@@ -35,12 +35,19 @@ async def set_commission_callback(callback: types.CallbackQuery, callback_data: 
 async def set_deposit(message: types.Message, state: FSMContext):
     try:
         c = float(message.text)
+        if c > 100 or c < 0:
+            m = 'Неправильное значение (должно быть числом не больше 100 и не меньше 0)'
+
+            await message.answer(text=m)
+            await message.answer(text='Введите новое значение (в %)')
+
     except ValueError:
-        m = 'Неправильное значение (0.1)'
+        m = 'Неправильное значение (должно быть числом не больше 100 и не меньше 0)'
 
         await message.answer(text=m)
+        await message.answer(text='Введите новое значение (в %)')
     else:
-        m = 'Новое значение комиссии установлено'
+        m = 'Новая комиссия установлено'
 
         await message.answer(text=m)
 
@@ -52,12 +59,19 @@ async def set_deposit(message: types.Message, state: FSMContext):
 async def set_withdrawal(message: types.Message, state: FSMContext):
     try:
         c = float(message.text)
+        if c > 100 or c < 0:
+            m = 'Неправильное значение (должно быть числом не больше 100 и не меньше 0)'
+
+            await message.answer(text=m)
+            await message.answer(text='Введите новое значение (в %)')
+
     except ValueError:
-        m = 'Неправильное значение (0.1)'
+        m = 'Неправильное значение (должно быть числом не больше 100 и не меньше 0)'
 
         await message.answer(text=m)
+        await message.answer(text='Введите новое значение (в %)')
     else:
-        m = 'Новое значение комиссии установлено'
+        m = 'Новая комиссия установлено'
 
         await message.answer(text=m)
 
@@ -69,12 +83,19 @@ async def set_withdrawal(message: types.Message, state: FSMContext):
 async def set_swap(message: types.Message, state: FSMContext):
     try:
         c = float(message.text)
+        if c > 100 or c < 0:
+            m = 'Неправильное значение (должно быть числом не больше 100 и не меньше 0)'
+
+            await message.answer(text=m)
+            await message.answer(text='Введите новое значение (в %)')
+
     except ValueError:
-        m = 'Неправильное значение (0.1)'
+        m = 'Неправильное значение (должно быть числом не больше 100 и не меньше 0)'
 
         await message.answer(text=m)
+        await message.answer(text='Введите новое значение (в %)')
     else:
-        m = 'Новое значение комиссии установлено'
+        m = 'Новая комиссия установлено'
 
         await message.answer(text=m)
 
@@ -86,12 +107,19 @@ async def set_swap(message: types.Message, state: FSMContext):
 async def set_buy(message: types.Message, state: FSMContext):
     try:
         c = float(message.text)
+        if c > 100 or c < 0:
+            m = 'Неправильное значение (должно быть числом не больше 100 и не меньше 0)'
+
+            await message.answer(text=m)
+            await message.answer(text='Введите новое значение (в %)')
+
     except ValueError:
-        m = 'Неправильное значение (0.1)'
+        m = 'Неправильное значение (должно быть числом не больше 100 и не меньше 0)'
 
         await message.answer(text=m)
+        await message.answer(text='Введите новое значение (в %)')
     else:
-        m = 'Новое значение комиссии установлено'
+        m = 'Новая комиссия установлено'
 
         await message.answer(text=m)
 
@@ -103,12 +131,19 @@ async def set_buy(message: types.Message, state: FSMContext):
 async def set_sell(message: types.Message, state: FSMContext):
     try:
         c = float(message.text)
+        if c > 100 or c < 0:
+            m = 'Неправильное значение (должно быть числом не больше 100 и не меньше 0)'
+
+            await message.answer(text=m)
+            await message.answer(text='Введите новое значение (в %)')
+
     except ValueError:
-        m = 'Неправильное значение (0.1)'
+        m = 'Неправильное значение (должно быть числом не больше 100 и не меньше 0)'
 
         await message.answer(text=m)
+        await message.answer(text='Введите новое значение (в %)')
     else:
-        m = 'Новое значение комиссии установлено'
+        m = 'Новая комиссия установлено'
 
         await message.answer(text=m)
 

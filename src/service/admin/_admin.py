@@ -51,9 +51,9 @@ class AdminService:
 
     @staticmethod
     async def get_commission(c: CommissionType) -> float:
-        c = await r.get(c)
-        if c:
-            return c
+        res = await r.get(c)
+        if res:
+            return float(res)
 
         return (await AdminRepo.get_commission(c)).value
 
