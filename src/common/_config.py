@@ -1,0 +1,28 @@
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from ._constants import BASE_DIR
+
+
+class Config(BaseSettings):
+    CMC_API_KEY: str
+
+    BOT_TOKEN: str
+    ADMIN_ID: int
+
+    PG_HOST: str
+    PG_PORT: str
+    PG_NAME: str
+    PG_USER: str
+    PG_PASS: str
+
+    REDIS_HOST: str
+    REDIS_PORT: str
+
+    @property
+    def DB_URI(self) -> str:
+        return f'postgresql+asyncpg://{self.PG_USER}:{self.PG_PASS}@{self.PG_HOST}:{self.PG_PORT}/{self.PG_NAME}'
+
+    model_config = SettingsConfigDict(env_file=BASE_DIR/'.env', env_file_encoding='utf-8', extra='ignore')
+
+
+config = Config()

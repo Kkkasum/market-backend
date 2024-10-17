@@ -1,0 +1,20 @@
+from fastapi import APIRouter
+
+from src.api.user import router as user_router
+from src.api.user.deposit import router as deposit_router
+from src.api.user.withdraw import router as withdraw_router
+from src.api.number import router as number_router
+from src.api.username import router as username_router
+from src.api.token import router as token_router
+from src.api.market import router as market_router
+
+router = APIRouter()
+
+user_router.include_router(deposit_router, prefix='/deposit')
+user_router.include_router(withdraw_router, prefix='/withdraw')
+
+router.include_router(user_router, prefix='/user', tags=['User'])
+router.include_router(number_router, prefix='/number', tags=['Number'])
+router.include_router(username_router, prefix='/username', tags=['Username'])
+router.include_router(token_router, prefix='/token', tags=['Token'])
+router.include_router(market_router, prefix='/market', tags=['Market'])
