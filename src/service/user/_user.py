@@ -6,6 +6,10 @@ from src.service.history import HistoryService
 
 class UserService:
     @staticmethod
+    async def add_user(user_id: int) -> None:
+        await UserRepo.add_user(user_id)
+
+    @staticmethod
     async def add_deposit(
         user_id: int,
         ton_balance: float,

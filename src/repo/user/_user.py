@@ -6,6 +6,16 @@ from src.database import new_session, User, UserNumber, UserUsername, UserSwap
 
 class UserRepo:
     @staticmethod
+    async def add_user(user_id: int) -> None:
+        async with new_session() as session:
+            stmt = (
+                insert(User)
+                .values(id=user_id)
+            )
+            await session.execute(stmt)
+            await session.commit()
+
+    @staticmethod
     async def add_user_number(user_id: int, number_id: int) -> None:
         async with new_session() as session:
             stmt = (

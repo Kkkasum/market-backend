@@ -25,6 +25,10 @@ class UserHistoryResponse(UserHistory):
     pass
 
 
+class AddUserRequest(BaseModel):
+    user_id: int = Field(validation_alias='userId')
+
+
 class AddUserSwapRequest(BaseModel):
     user_id: int = Field(validation_alias='userId')
     from_token: str = Field(validation_alias='fromToken')

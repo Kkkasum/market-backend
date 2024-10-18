@@ -4,6 +4,8 @@ from ._constants import BASE_DIR
 
 
 class Config(BaseSettings):
+    ORIGIN_URL: str
+
     CMC_API_KEY: str
 
     BOT_TOKEN: str

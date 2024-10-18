@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from src.api import router as api_router
+from src.common import config
 
 
 @asynccontextmanager
@@ -23,7 +24,7 @@ app = FastAPI(
 )
 
 origins = [
-    '*'
+    config.ORIGIN_URL
 ]
 
 app.add_middleware(

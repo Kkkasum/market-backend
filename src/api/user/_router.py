@@ -1,16 +1,18 @@
 from fastapi import APIRouter, status, HTTPException
 
+from sqlalchemy.exc import IntegrityError
+
 from ._schemas import (
     UserResponse,
     UserWalletResponse,
     UserNumbersResponse,
     UserUsernamesResponse,
     UserHistoryResponse,
+    AddUserRequest,
     AddUserSwapRequest
 )
 from src.service.user import UserService
 from src.service.token import TokenService
-from src.service.history import HistoryService
 
 router = APIRouter()
 
@@ -136,6 +138,28 @@ async def get_user_history(user_id: int):
     return UserHistoryResponse.model_validate(
         user_history, from_attributes=True
     )
+
+
+@router.post(
+    '/',
+    responses={
+        status.HTTP_201_CREATED: {
+            'description': 'Add new user'
+        },
+        status.HTTP_409_CONFLICT: {
+            'description': 'Specified user is exists'
+        }
+    },
+    status_code=status.HTTP_201_CREATED
+)
+async def add_user(data: AddUserRequest):
+    try:
+        await UserService.add_user(data.user_id)
+    except IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f'User {data.user_id} is exists'
+        )
 
 
 @router.post(
