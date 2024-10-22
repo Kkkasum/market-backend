@@ -8,8 +8,7 @@ class UserStatus(StrEnum):
 
 class TransactionToken(StrEnum):
     TON = 'TON'
-    USDT_TON = 'USDT-TON'
-    USDT_TRC = 'USDT-TRC'
+    USDT = 'USDT'
 
 
 class SwapToken(StrEnum):

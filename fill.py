@@ -1,10 +1,13 @@
 import asyncio
+import aiohttp
+
+from src.common import config
 
 from src.repo.fill import Fill
 
 
 async def main():
-    await Fill().all()
+    pass
 
 
 if __name__ == '__main__':

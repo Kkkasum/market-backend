@@ -1,9 +1,6 @@
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardMarkup
 
-from ._commission import CommissionCallbackData
-from ._user import UserCallbackData
-
 
 class MainCallbackData(CallbackData, prefix='main'):
     page: str
@@ -26,7 +23,7 @@ def main_kb() -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
-def back_kb(cb_data: MainCallbackData | CommissionCallbackData | UserCallbackData) -> InlineKeyboardMarkup:
+def back_kb(cb_data) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
 
     builder.button(

@@ -16,8 +16,9 @@ class UserService:
         usdt_balance: float,
         token: str,
         amount: float,
+        tx_hash: str
     ) -> None:
-        await HistoryService.add_deposit(user_id, token, amount)
+        await HistoryService.add_deposit(user_id, token, amount, tx_hash)
 
         if token == 'TON':
             await UserRepo.update_user_balance(user_id, ton_balance + amount, usdt_balance)
@@ -31,14 +32,15 @@ class UserService:
         usdt_balance: float,
         token: str,
         amount: float,
-        address: str
+        address: str,
+        tx_hash: str
     ) -> None:
-        await HistoryService.add_withdrawal(user_id, token, amount, address)
+        await HistoryService.add_withdrawal(user_id, token, amount, address, tx_hash)
 
         if token == 'TON':
-            await UserRepo.update_user_balance(user_id, ton_balance - amount, usdt_balance)
+            await UserRepo.update_ton_balance(user_id, ton_balance - amount)
         else:
-            await UserRepo.update_user_balance(user_id, ton_balance, usdt_balance - amount)
+            await UserRepo.update_usdt_balance(user_id, usdt_balance - amount)
 
     @staticmethod
     async def add_user_swap(
@@ -65,6 +67,10 @@ class UserService:
     @staticmethod
     async def add_username(user_id: int, username_id: int) -> None:
         await UserRepo.add_user_username(user_id, username_id)
+
+    @staticmethod
+    async def add_user_tron_address(user_id: int, address: str) -> None:
+        await UserRepo.add_user_tron_address(user_id, address)
 
     @staticmethod
     async def get_user(user_id: int) -> User | None:
@@ -169,6 +175,10 @@ class UserService:
         user_username = await UserRepo.get_user_username(user_id, username_id)
 
         return user_username.id
+
+    @staticmethod
+    async def get_user_tron_address(user_id: int) -> str | None:
+        return await UserRepo.get_user_tron_address(user_id)
 
     @staticmethod
     async def update_ton_balance(user_id: int, new_ton_balance: float) -> None:

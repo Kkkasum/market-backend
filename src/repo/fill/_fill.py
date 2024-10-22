@@ -109,12 +109,12 @@ class Fill:
                 ),
                 UserDeposit(
                     user_id=6165565929,
-                    token=TransactionToken.USDT_TON,
+                    token=TransactionToken.USDT,
                     amount=10
                 ),
                 UserDeposit(
                     user_id=6165565929,
-                    token=TransactionToken.USDT_TRC,
+                    token=TransactionToken.USDT,
                     amount=10
                 ),
             ]
@@ -133,13 +133,13 @@ class Fill:
                 ),
                 UserWithdrawal(
                     user_id=6165565929,
-                    token=TransactionToken.USDT_TON,
+                    token=TransactionToken.USDT,
                     amount=10,
                     address='UQAvR5PPWDccqQ6Zu_UlRizMlFfqa7IMK_5TuRwrEySihbVH'
                 ),
                 UserWithdrawal(
                     user_id=6165565929,
-                    token=TransactionToken.USDT_TRC,
+                    token=TransactionToken.USDT,
                     amount=10,
                     address='UQAvR5PPWDccqQ6Zu_UlRizMlFfqa7IMK_5TuRwrEySihbVH'
                 ),

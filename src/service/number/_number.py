@@ -52,3 +52,7 @@ class NumberService:
             )[0].load_string()
 
             return number
+
+    @staticmethod
+    async def delete_number(number: str) -> None:
+        await NumberRepo.delete_number(number)

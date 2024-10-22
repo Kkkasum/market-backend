@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: d5f6ff3fb104
+Revision ID: f7d30ae53d4b
 Revises: 
-Create Date: 2024-10-17 13:01:45.875612
+Create Date: 2024-10-21 18:46:50.354073
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'd5f6ff3fb104'
+revision: str = 'f7d30ae53d4b'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -50,11 +50,20 @@ def upgrade() -> None:
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('users_addresses',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.BIGINT(), nullable=False),
+    sa.Column('address', sa.String(), nullable=False),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('address')
+    )
     op.create_table('users_deposits',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.BIGINT(), nullable=False),
-    sa.Column('token', sa.Enum('TON', 'USDT_TON', 'USDT_TRC', name='transactiontoken'), nullable=False),
+    sa.Column('token', sa.Enum('TON', 'USDT', name='transactiontoken'), nullable=False),
     sa.Column('amount', sa.Float(), nullable=False),
+    sa.Column('tx_hash', sa.String(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
@@ -90,7 +99,7 @@ def upgrade() -> None:
     op.create_table('users_withdrawals',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.BIGINT(), nullable=False),
-    sa.Column('token', sa.Enum('TON', 'USDT_TON', 'USDT_TRC', name='transactiontoken'), nullable=False),
+    sa.Column('token', sa.Enum('TON', 'USDT', name='transactiontoken'), nullable=False),
     sa.Column('amount', sa.Float(), nullable=False),
     sa.Column('address', sa.String(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
@@ -125,6 +134,7 @@ def downgrade() -> None:
     op.drop_table('users_swaps')
     op.drop_table('users_numbers')
     op.drop_table('users_deposits')
+    op.drop_table('users_addresses')
     op.drop_table('users')
     op.drop_table('usernames')
     op.drop_table('numbers')

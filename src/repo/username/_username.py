@@ -1,4 +1,4 @@
-from sqlalchemy import select, insert, update
+from sqlalchemy import select, insert, update, delete
 from sqlalchemy.orm import joinedload
 
 from src.database import new_session, Username
@@ -16,3 +16,13 @@ class UsernameRepo:
             res = (await session.execute(query)).scalar_one_or_none()
 
             return res
+
+    @staticmethod
+    async def delete_number(username: str) -> None:
+        async with new_session() as session:
+            stmt = (
+                delete(Username)
+                .where(Username.username == username)
+            )
+            await session.execute(stmt)
+            await session.commit()

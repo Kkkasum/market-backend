@@ -185,13 +185,6 @@ async def add_user_swap(data: AddUserSwapRequest):
             detail=f'User {data.user_id} not found'
         )
 
-    # to_token_price = await TokenService.get_token_price(data.from_token.lower())
-    # if not to_token_price:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    #         detail='Error'
-    #     )
-
     if data.from_token == 'TON':
         to_token_price = await TokenService.get_ton_to_usdt_price()
         volume = to_token_price * data.from_amount

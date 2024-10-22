@@ -58,6 +58,17 @@ class Username(Base):
     )
 
 
+class UserAddress(Base):
+    __tablename__ = 'users_addresses'
+    __table_args__ = (
+        UniqueConstraint('address'),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'))
+    address: Mapped[str]
+
+
 class UserNumber(Base):
     __tablename__ = 'users_numbers'
 
@@ -105,7 +116,7 @@ class UserDeposit(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'))
     token: Mapped[TransactionToken]
     amount: Mapped[float]
-    # tx_hash: Mapped[str]
+    tx_hash: Mapped[str]
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
 
@@ -117,7 +128,7 @@ class UserWithdrawal(Base):
     token: Mapped[TransactionToken]
     amount: Mapped[float]
     address: Mapped[str]
-    # tx_hash: Mapped[str]
+    tx_hash: Mapped[str]
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
 

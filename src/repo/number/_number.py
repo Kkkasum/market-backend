@@ -1,4 +1,4 @@
-from sqlalchemy import select, insert, update
+from sqlalchemy import select, insert, update, delete
 from sqlalchemy.orm import joinedload
 
 from src.database import new_session, Number
@@ -16,3 +16,13 @@ class NumberRepo:
             res = (await session.execute(query)).scalar_one_or_none()
 
             return res
+
+    @staticmethod
+    async def delete_number(number: str) -> None:
+        async with new_session() as session:
+            stmt = (
+                delete(Number)
+                .where(Number.number == number)
+            )
+            await session.execute(stmt)
+            await session.commit()

@@ -15,6 +15,14 @@ class HistoryService:
         ]
 
     @staticmethod
+    async def get_deposit_by_tx_hash(tx_hash: str) -> DepositTx | None:
+        deposit = await HistoryRepo.get_deposit_by_tx_hash(tx_hash)
+        if not deposit:
+            return
+
+        return DepositTx.model_validate(deposit, from_attributes=True)
+
+    @staticmethod
     async def get_withdrawals(user_id: int) -> list[WithdrawalTx] | None:
         withdrawals = await HistoryRepo.get_withdrawals(user_id)
         if not withdrawals:
@@ -37,12 +45,12 @@ class HistoryService:
         ]
 
     @staticmethod
-    async def add_withdrawal(user_id: int, token: str, amount: float, address: str) -> None:
-        await HistoryRepo.add_withdrawal(user_id, token, amount, address)
+    async def add_withdrawal(user_id: int, token: str, amount: float, address: str, tx_hash: str) -> None:
+        await HistoryRepo.add_withdrawal(user_id, token, amount, address, tx_hash)
 
     @staticmethod
-    async def add_deposit(user_id: int, token: str, amount: float) -> None:
-        await HistoryRepo.add_deposit(user_id, token, amount)
+    async def add_deposit(user_id: int, token: str, amount: float, tx_hash: str) -> None:
+        await HistoryRepo.add_deposit(user_id, token, amount, tx_hash)
 
     @staticmethod
     async def add_swap(
@@ -54,4 +62,3 @@ class HistoryService:
         volume: float
     ) -> None:
         await HistoryRepo.add_swap(user_id, from_token, from_amount, to_token, to_amount, volume)
-

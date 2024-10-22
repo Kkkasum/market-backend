@@ -6,9 +6,12 @@ class WithdrawRequest(BaseModel):
     address: str
 
 
-class WithdrawTokenRequest(WithdrawRequest):
-    token: str
+class WithdrawUsdtRequest(WithdrawRequest):
     amount: float
+
+
+class WithdrawTonRequest(WithdrawUsdtRequest):
+    pass
 
 
 class WithdrawNumberRequest(WithdrawRequest):

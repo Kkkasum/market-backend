@@ -54,3 +54,7 @@ class UsernameService:
             )[0].load_string()
 
             return username
+
+    @staticmethod
+    async def delete_username(username: str) -> None:
+        await UsernameRepo.delete_number(username)

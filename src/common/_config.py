@@ -6,7 +6,15 @@ from ._constants import BASE_DIR
 class Config(BaseSettings):
     ORIGIN_URL: str
 
+    TONAPI_KEY: str
+    TONCENTER_API_KEY: str
+    TONCENTER_API_KEY_TESTNET: str
+
     CMC_API_KEY: str
+    B2B_API_KEY: str
+
+    MNEMONICS: str
+    TON_WALLET_ADDRESS: str
 
     BOT_TOKEN: str
     ADMIN_ID: int

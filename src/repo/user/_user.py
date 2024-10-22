@@ -1,7 +1,7 @@
 from sqlalchemy import insert, select, update, delete
 from sqlalchemy.orm import joinedload, selectinload
 
-from src.database import new_session, User, UserNumber, UserUsername, UserSwap
+from src.database import new_session, User, UserNumber, UserUsername, UserAddress
 
 
 class UserRepo:
@@ -36,6 +36,19 @@ class UserRepo:
                 .values(
                     user_id=user_id,
                     number_id=username_id
+                )
+            )
+            await session.execute(stmt)
+            await session.commit()
+
+    @staticmethod
+    async def add_user_tron_address(user_id: int, address: str) -> None:
+        async with new_session() as session:
+            stmt = (
+                insert(UserAddress)
+                .values(
+                    user_id=user_id,
+                    address=address
                 )
             )
             await session.execute(stmt)
@@ -114,6 +127,17 @@ class UserRepo:
                     UserUsername.user_id == user_id,
                     UserUsername.username_id == username_id
                 )
+            )
+            res = (await session.execute(query)).scalar_one_or_none()
+
+            return res
+
+    @staticmethod
+    async def get_user_tron_address(user_id: int) -> str | None:
+        async with new_session() as session:
+            query = (
+                select(UserAddress.address)
+                .where(UserAddress.user_id == user_id)
             )
             res = (await session.execute(query)).scalar_one_or_none()
 
