@@ -89,7 +89,6 @@ async def withdraw_ton(data: WithdrawTonRequest):
         )
 
     await WithdrawalService.withdraw_ton(data.user_id, data.address, data.amount)
-
     await UserService.add_withdrawal(
         user_id=user.user_id,
         ton_balance=user.ton_balance,

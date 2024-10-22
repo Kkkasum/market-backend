@@ -39,8 +39,12 @@ class WithdrawalService:
         if balance < 0.1:
             return 1
 
+        raw_account = await client.get_raw_account(wallet.address.to_str())
+        print(raw_account.status)
+
         print(f'Withdraw for user {user_id}, destination: {destination}, amount: {amount}')
-        await wallet.transfer(destination=destination, amount=amount)
+        await wallet.create_internal_msg()
+        await wallet.transfer(destination=destination, amount=amount, state_init=wallet.state_init)
 
     @staticmethod
     async def withdraw_nft(user_id: int, destination: str, nft_address: str) -> int | None:
