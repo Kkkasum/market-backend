@@ -121,7 +121,7 @@ class AccountSubscription:
 
                 res = await resp.json()
 
-                return res['messages']
+                return res['nft_transfers']
 
     async def get_nft_transfers(self, collection_address: str) -> list[NftTransfer] | None:
         nft_transfers = await self.get_wallet_nft_transfers(collection_address)
@@ -140,7 +140,7 @@ class AccountSubscription:
         ]
 
     @staticmethod
-    async def get_number_nft_transfer_data(nft_transfer: NftTransfer) -> [int, str, str] | None:
+    async def get_number_nft_transfer_data(nft_transfer: NftTransfer) -> [int, str, str]:
         try:
             nft_address = Address(nft_transfer.nft_address)
         except AddressError:
@@ -156,7 +156,7 @@ class AccountSubscription:
         return [user_id, number, nft_address.to_str()]
 
     @staticmethod
-    async def get_username_nft_transfer_data(nft_transfer: NftTransfer) -> [int, str, str] | None:
+    async def get_username_nft_transfer_data(nft_transfer: NftTransfer) -> [int, str, str]:
         try:
             nft_address = Address(nft_transfer.nft_address)
         except AddressError:
@@ -169,7 +169,7 @@ class AccountSubscription:
         comment = Cell.one_from_boc(nft_transfer.forward_payload).begin_parse().skip_bits(32)
         user_id = comment.load_string()
 
-        return [user_id, username, nft_address.to_str()]
+        return user_id, username, nft_address.to_str()
 
     async def check_for_numbers_transfers(self) -> None:
         transfers = await self.get_nft_transfers(NUMBERS_COLLECTION_ADDRESS)
