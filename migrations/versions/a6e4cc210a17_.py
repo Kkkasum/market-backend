@@ -1,18 +1,18 @@
 """empty message
 
-Revision ID: 360197cab43d
+Revision ID: a6e4cc210a17
 Revises: 
-Create Date: 2024-10-22 18:55:47.477177
+Create Date: 2024-10-23 17:42:38.167446
 
 """
 from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-
+from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = '360197cab43d'
+revision: str = 'a6e4cc210a17'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -33,6 +33,11 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('address'),
     sa.UniqueConstraint('number')
+    )
+    op.create_table('start_utime',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('start_utime', postgresql.TIMESTAMP(), server_default=sa.text('now()'), nullable=False),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('usernames',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -138,6 +143,7 @@ def downgrade() -> None:
     op.drop_table('users_addresses')
     op.drop_table('users')
     op.drop_table('usernames')
+    op.drop_table('start_utime')
     op.drop_table('numbers')
     op.drop_table('commissions')
     # ### end Alembic commands ###

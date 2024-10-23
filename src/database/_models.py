@@ -2,7 +2,7 @@ from datetime import datetime
 
 from sqlalchemy import String, text, func, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.dialects.postgresql import BIGINT
+from sqlalchemy.dialects.postgresql import BIGINT, TIMESTAMP
 
 from ._db import Base
 from ._enums import UserStatus, TransactionToken, SwapToken, CommissionType
@@ -177,3 +177,10 @@ class Commission(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     type: Mapped[CommissionType]
     value: Mapped[float] = mapped_column(server_default=text('0'))
+
+
+class StartUtime(Base):
+    __tablename__ = 'start_utime'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    start_utime: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
