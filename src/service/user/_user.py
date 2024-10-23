@@ -65,7 +65,7 @@ class UserService:
         await UserRepo.add_user_number(user_id, number_id)
 
     @staticmethod
-    async def add_username(user_id: int, username_id: int) -> None:
+    async def add_user_username(user_id: int, username_id: int) -> None:
         await UserRepo.add_user_username(user_id, username_id)
 
     @staticmethod

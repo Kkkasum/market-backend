@@ -32,3 +32,20 @@ class Message(BaseModel):
     import_fee: str | None = None
     message_content: MessageContent | None = None
     init_state: MessageContent | None = None
+
+
+class NftTransfer(BaseModel):
+    query_id: str | None = None
+    nft_address: str | None = None
+    nft_collection: str | None = None
+    transaction_hash: str | None = None
+    transaction_lt: str | None = None
+    transaction_now: int | None = None
+    transaction_aborted: bool | None = None
+    old_owner: str | None = None
+    new_owner: str | None = None
+    response_destination: str | None = None
+    custom_payload: str | None = None
+    forward_amount: str | None = None
+    forward_payload: str | None = None
+    trace_id: str | None = None

@@ -7,6 +7,10 @@ from src.repo.username import UsernameRepo
 
 class UsernameService:
     @staticmethod
+    async def add_username(username: str, address: str) -> int:
+        return await UsernameRepo.add_username(username, address)
+
+    @staticmethod
     async def get_username(username: str) -> UsernameWithOwner | None:
         username = await UsernameRepo.get_username(username)
         if not username:

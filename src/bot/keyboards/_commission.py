@@ -17,10 +17,6 @@ def commission_kb() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
 
     builder.button(
-        text='Ввод',
-        callback_data=CommissionCallbackData(c=CommissionType.DEPOSIT)
-    )
-    builder.button(
         text='Вывод',
         callback_data=CommissionCallbackData(c=CommissionType.WITHDRAWAL)
     )

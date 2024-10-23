@@ -11,10 +11,12 @@ class Tx(BaseModel):
 class DepositTx(Tx):
     token: str
     amount: float
+    tx_hash: str = Field(serialization_alias='txHash')
 
 
 class WithdrawalTx(DepositTx):
     address: str
+    tx_hash: str = Field(serialization_alias='txHash')
 
 
 class SwapTx(Tx):

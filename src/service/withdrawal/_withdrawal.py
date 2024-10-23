@@ -30,7 +30,7 @@ class WithdrawalService:
 
     @staticmethod
     async def withdraw_ton(user_id: int, destination: str, amount: float) -> int | None:
-        client = TonapiClient(api_key=config.TONAPI_KEY, is_testnet=True)
+        client = TonapiClient(api_key=config.TONAPI_KEY, is_testnet=False)
         mnemonics = config.MNEMONICS.split(' ')
 
         wallet, _, _, _ = HighloadWalletV3.from_mnemonic(client, mnemonics, wallet_id=239, timeout=128)

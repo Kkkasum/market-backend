@@ -1,5 +1,4 @@
 from fastapi import APIRouter, status, HTTPException
-import asyncio
 
 from ._schemas import (
     MarketNumbersResponse,
@@ -9,6 +8,7 @@ from ._schemas import (
     BuyNumberRequest,
     BuyUsernameRequest
 )
+from src.service.admin import AdminService, CommissionType
 from src.service.market import MarketService
 from src.service.user import UserService
 from src.service.number import NumberService, Status as NumberStatus
@@ -177,6 +177,11 @@ async def remove_username(user_id: int, username_id: int):
     status_code=status.HTTP_201_CREATED
 )
 async def buy_number(data: BuyNumberRequest):
+    buy_com, sell_com = (
+        await AdminService.get_commission(CommissionType.BUY),
+        await AdminService.get_commission(CommissionType.SELL)
+    )
+
     number = await NumberService.get_number(data.number)
     if not number:
         raise HTTPException(
@@ -205,8 +210,12 @@ async def buy_number(data: BuyNumberRequest):
 
     owner = await UserService.get_user_wallet(number.owner_id)
 
-    await UserService.update_ton_balance(data.user_id, user.ton_balance - number.price)      # update buyer
-    await UserService.update_ton_balance(number.owner_id, owner.ton_balance + number.price)  # update owner
+    await UserService.update_ton_balance(
+        data.user_id, user.ton_balance - (number.price + number.price * buy_com)
+    )  # update buyer
+    await UserService.update_ton_balance(
+        number.owner_id, owner.ton_balance + (number.price + number.price * sell_com)
+    )  # update owner
 
     res = await UserService.update_number_owner(data.user_id, number.id)
     await MarketService.delete_number(res)
@@ -231,6 +240,11 @@ async def buy_number(data: BuyNumberRequest):
     status_code=status.HTTP_201_CREATED
 )
 async def buy_username(data: BuyUsernameRequest):
+    buy_com, sell_com = (
+        await AdminService.get_commission(CommissionType.BUY),
+        await AdminService.get_commission(CommissionType.SELL)
+    )
+
     username = await UsernameService.get_username(data.username)
     if not username:
         raise HTTPException(
@@ -259,8 +273,12 @@ async def buy_username(data: BuyUsernameRequest):
 
     owner = await UserService.get_user_wallet(username.owner_id)
 
-    await UserService.update_ton_balance(data.user_id, user.ton_balance - username.price)  # update buyer
-    await UserService.update_ton_balance(username.owner_id, owner.ton_balance + username.price)  # update owner
+    await UserService.update_ton_balance(
+        data.user_id, user.ton_balance - (username.price + username.price * buy_com)
+    )  # update buyer
+    await UserService.update_ton_balance(
+        username.owner_id, owner.ton_balance + (username.price + username.price * sell_com)
+    )  # update owner
 
     res = await UserService.update_username_owner(data.user_id, username.id)
     await MarketService.delete_username(res)

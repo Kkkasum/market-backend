@@ -7,10 +7,9 @@ from src.common import r
 class AdminService:
     @staticmethod
     async def get_commissions() -> list[Commission]:
-        deposit = r.get(CommissionType.DEPOSIT)
-        if deposit:
-            withdraw, swap, buy, sell = (
-                r.get(CommissionType.WITHDRAWAL),
+        withdraw = r.get(CommissionType.WITHDRAWAL)
+        if withdraw:
+            swap, buy, sell = (
                 r.get(CommissionType.SWAP),
                 r.get(CommissionType.BUY),
                 r.get(CommissionType.SELL)
@@ -21,15 +20,17 @@ class AdminService:
                     type=t,
                     value=v
                 )
-                for t, v in zip((
-                    CommissionType.DEPOSIT,
-                    CommissionType.WITHDRAWAL,
-                    CommissionType.SWAP,
-                    CommissionType.BUY,
-                    CommissionType.SELL
-                ), (
-                    deposit, withdraw, swap, buy, sell
-                ))
+                for t, v in zip(
+                    (
+                        CommissionType.WITHDRAWAL,
+                        CommissionType.SWAP,
+                        CommissionType.BUY,
+                        CommissionType.SELL
+                    ),
+                    (
+                        withdraw, swap, buy, sell
+                    )
+                )
             ]
 
         commissions = await AdminRepo.get_commissions()

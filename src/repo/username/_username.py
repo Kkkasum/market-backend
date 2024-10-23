@@ -6,6 +6,22 @@ from src.database import new_session, Username
 
 class UsernameRepo:
     @staticmethod
+    async def add_username(username: str, address: str) -> int:
+        async with new_session() as session:
+            stmt = (
+                insert(Username)
+                .values(
+                    username=username,
+                    address=address
+                )
+                .returning(Username.id)
+            )
+            res = await session.execute(stmt)
+            await session.commit()
+
+            return res
+
+    @staticmethod
     async def get_username(username: str) -> Username | None:
         async with new_session() as session:
             query = (

@@ -7,6 +7,10 @@ from src.repo.number import NumberRepo
 
 class NumberService:
     @staticmethod
+    async def add_number(number: str, address: str) -> int:
+        return await NumberRepo.add_number(number, address)
+
+    @staticmethod
     async def get_number(number: str) -> NumberWithOwner | MarketNumber | None:
         number = await NumberRepo.get_number(number)
         if not number:

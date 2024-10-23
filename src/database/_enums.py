@@ -17,7 +17,6 @@ class SwapToken(StrEnum):
 
 
 class CommissionType(StrEnum):
-    DEPOSIT = 'DEPOSIT'
     WITHDRAWAL = 'WITHDRAWAL'
     SWAP = 'SWAP'
     BUY = 'BUT'

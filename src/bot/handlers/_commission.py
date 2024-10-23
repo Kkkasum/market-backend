@@ -33,31 +33,6 @@ async def set_commission_callback(callback: types.CallbackQuery, callback_data: 
     await state.set_state(callback_data.c)
 
 
-@router.message(StateFilter(CommissionType.DEPOSIT))
-async def set_deposit(message: types.Message, state: FSMContext):
-    try:
-        c = float(message.text)
-        if c > 100 or c < 0:
-            m = 'Неправильное значение (должно быть числом не больше 100 и не меньше 0)'
-
-            await message.answer(text=m)
-            await message.answer(text='Введите новое значение (в %)')
-            return
-    except ValueError:
-        m = 'Неправильное значение (должно быть числом не больше 100 и не меньше 0)'
-
-        await message.answer(text=m)
-        await message.answer(text='Введите новое значение (в %)')
-        return
-    else:
-        m = 'Новая комиссия установлено'
-
-        await message.answer(text=m, reply_markup=back_kb(MainCallbackData(page='commission')))
-
-        await AdminService.set_commission(CommissionType.DEPOSIT, c / 100)
-        await state.clear()
-
-
 @router.message(StateFilter(CommissionType.WITHDRAWAL))
 async def set_withdrawal(message: types.Message, state: FSMContext):
     try:

@@ -6,6 +6,22 @@ from src.database import new_session, Number
 
 class NumberRepo:
     @staticmethod
+    async def add_number(number: str, address: str) -> int:
+        async with new_session() as session:
+            stmt = (
+                insert(Number)
+                .values(
+                    number=number,
+                    address=address
+                )
+                .returning(Number.id)
+            )
+            res = await session.execute(stmt)
+            await session.commit()
+
+            return res
+
+    @staticmethod
     async def get_number(number: str) -> Number | None:
         async with new_session() as session:
             query = (
