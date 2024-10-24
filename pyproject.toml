@@ -20,6 +20,7 @@ aiogram = "^3.13.1"
 redis = "^5.1.1"
 tonutils = "^0.1.5"
 pytonapi = "^0.4.2"
+gql = "^3.5.0"
 
 
 [build-system]

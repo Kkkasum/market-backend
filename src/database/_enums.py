@@ -16,8 +16,9 @@ class SwapToken(StrEnum):
     USDT = 'USDT'
 
 
-class CommissionType(StrEnum):
-    WITHDRAWAL = 'WITHDRAWAL'
+class FeeType(StrEnum):
+    WITHDRAWAL_TRON = 'WITHDRAWAL_TRON'
+    WITHDRAWAL_TON = 'WITHDRAWAL_TON'
     SWAP = 'SWAP'
     BUY = 'BUT'
     SELL = 'SELL'

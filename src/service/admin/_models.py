@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
-from src.repo.admin import CommissionType
+from src.repo.admin import FeeType
 
 
-class Commission(BaseModel):
-    type: CommissionType
+class Fee(BaseModel):
+    type: FeeType
     value: float

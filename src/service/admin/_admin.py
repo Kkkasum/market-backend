@@ -1,68 +1,74 @@
-from ._models import Commission
-from src.repo.admin import AdminRepo, CommissionType
+from ._models import Fee
+from src.repo.admin import AdminRepo, FeeType
 
 from src.common import r
 
 
 class AdminService:
     @staticmethod
-    async def get_commissions() -> list[Commission]:
-        withdraw = r.get(CommissionType.WITHDRAWAL)
-        if withdraw:
-            swap, buy, sell = (
-                r.get(CommissionType.SWAP),
-                r.get(CommissionType.BUY),
-                r.get(CommissionType.SELL)
+    async def get_fees() -> list[Fee]:
+        withdrawal_tron = r.get(FeeType.WITHDRAWAL_TRON)
+        if withdrawal_tron:
+            withdrawal_ton, swap, buy, sell = (
+                r.get(FeeType.WITHDRAWAL_TON),
+                r.get(FeeType.SWAP),
+                r.get(FeeType.BUY),
+                r.get(FeeType.SELL)
             )
 
             return [
-                Commission(
+                Fee(
                     type=t,
                     value=v
                 )
                 for t, v in zip(
                     (
-                        CommissionType.WITHDRAWAL,
-                        CommissionType.SWAP,
-                        CommissionType.BUY,
-                        CommissionType.SELL
+                        FeeType.WITHDRAWAL_TRON,
+                        FeeType.WITHDRAWAL_TON,
+                        FeeType.SWAP,
+                        FeeType.BUY,
+                        FeeType.SELL
                     ),
                     (
-                        withdraw, swap, buy, sell
+                        withdrawal_tron, withdrawal_ton, swap, buy, sell
                     )
                 )
             ]
 
-        commissions = await AdminRepo.get_commissions()
+        fees = await AdminRepo.get_fees()
 
         async with r.pipeline(transaction=True) as pipe:
             await (
-                pipe.set(commissions[0].type, commissions[0].value)
-                .set(commissions[1].type, commissions[1].value)
-                .set(commissions[2].type, commissions[2].value)
-                .set(commissions[3].type, commissions[3].value)
-                .set(commissions[4].type, commissions[4].value)
+                pipe.set(fees[0].type, fees[0].value)
+                .set(fees[1].type, fees[1].value)
+                .set(fees[2].type, fees[2].value)
+                .set(fees[3].type, fees[3].value)
+                .set(fees[4].type, fees[4].value)
                 .execute()
             )
 
         return [
-            Commission.model_validate(c, from_attributes=True)
-            for c in commissions
+            Fee.model_validate(c, from_attributes=True)
+            for c in fees
         ]
 
     @staticmethod
-    async def get_commission(c: CommissionType) -> float:
+    async def get_fee(c: FeeType) -> float | None:
         res = await r.get(c)
         if res:
             return float(res)
 
-        return (await AdminRepo.get_commission(c)).value
+        fee = await AdminRepo.get_fee(c)
+        if not fee:
+            return
+
+        return fee.value
 
     @staticmethod
-    async def set_commission(commission_type: CommissionType, value: float) -> None:
-        await r.set(commission_type, value)
+    async def set_fee(fee_type: FeeType, value: int) -> None:
+        await r.set(fee_type, value)
 
-        await AdminRepo.set_commission(commission_type, value)
+        await AdminRepo.set_fee(fee_type, value)
 
     @staticmethod
     async def activate_user(user_id: int) -> None:

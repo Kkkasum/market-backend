@@ -2,35 +2,39 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardMarkup
 
 from ._main import MainCallbackData
-from src.service.admin import CommissionType
+from src.service.admin import FeeType
 
 
-class CommissionCallbackData(CallbackData, prefix='commission'):
-    c: CommissionType
+class FeeCallbackData(CallbackData, prefix='fee'):
+    c: FeeType
 
 
-class SetCommissionCallbackData(CallbackData, prefix='set_commission'):
-    c: CommissionType
+class SetFeeCallbackData(CallbackData, prefix='set_fee'):
+    c: FeeType
 
 
-def commission_kb() -> InlineKeyboardMarkup:
+def fee_kb() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
 
     builder.button(
-        text='Вывод',
-        callback_data=CommissionCallbackData(c=CommissionType.WITHDRAWAL)
+        text='Вывод TRON',
+        callback_data=FeeCallbackData(c=FeeType.WITHDRAWAL_TRON)
+    )
+    builder.button(
+        text='Вывод TON',
+        callback_data=FeeCallbackData(c=FeeType.WITHDRAWAL_TON)
     )
     builder.button(
         text='Обмен',
-        callback_data=CommissionCallbackData(c=CommissionType.SWAP)
+        callback_data=FeeCallbackData(c=FeeType.SWAP)
     )
     builder.button(
         text='Покупка',
-        callback_data=CommissionCallbackData(c=CommissionType.BUY)
+        callback_data=FeeCallbackData(c=FeeType.BUY)
     )
     builder.button(
         text='Продажа',
-        callback_data=CommissionCallbackData(c=CommissionType.SELL)
+        callback_data=FeeCallbackData(c=FeeType.SELL)
     )
     builder.button(
         text='⬅️ Вернуться',
@@ -42,16 +46,16 @@ def commission_kb() -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
-def com_kb(c: CommissionType) -> InlineKeyboardMarkup:
+def com_kb(c: FeeType) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
 
     builder.button(
         text='Установить новое значение',
-        callback_data=SetCommissionCallbackData(c=c)
+        callback_data=SetFeeCallbackData(c=c)
     )
     builder.button(
         text='⬅️ Вернуться',
-        callback_data=MainCallbackData(page='commission')
+        callback_data=MainCallbackData(page='fee')
     )
 
     return builder.as_markup()

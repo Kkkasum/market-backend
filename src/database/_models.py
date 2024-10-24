@@ -5,7 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import BIGINT, TIMESTAMP
 
 from ._db import Base
-from ._enums import UserStatus, TransactionToken, SwapToken, CommissionType
+from ._enums import UserStatus, TransactionToken, SwapToken, FeeType
 
 
 class User(Base):
@@ -171,12 +171,15 @@ class MarketUsername(Base):
     )
 
 
-class Commission(Base):
-    __tablename__ = 'commissions'
+class Fee(Base):
+    __tablename__ = 'fees'
+    __table_args__ = (
+        UniqueConstraint('type'),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    type: Mapped[CommissionType]
-    value: Mapped[float] = mapped_column(server_default=text('0'))
+    type: Mapped[FeeType]
+    value: Mapped[int] = mapped_column(server_default=text('0'))
 
 
 class StartUtime(Base):

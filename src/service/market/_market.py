@@ -1,6 +1,8 @@
 from ._models import NumberStatus, UsernameStatus, MarketNumber, MarketUsername
+from src.common import r, NUMBERS_COLLECTION_ADDRESS, USERNAMES_COLLECTION_ADDRESS
 from src.repo.market import MarketRepo
 from src.service.user import UserService
+from src.service.nft import NftService
 
 
 class MarketService:
@@ -41,6 +43,34 @@ class MarketService:
             )
             for username in usernames
         ]
+
+    @staticmethod
+    async def get_instant_sell_number_price() -> float | None:
+        price = await r.get('instant_sell_number_price')
+        if price:
+            return float(price)
+
+        price = await NftService.get_nft_collection_floor_price(NUMBERS_COLLECTION_ADDRESS)
+        if not price:
+            return
+
+        await r.setex(name='instant_sell_number_price', value=float(price), time=3600)
+
+        return float(price)
+
+    @staticmethod
+    async def get_instant_sell_username_price() -> float | None:
+        price = await r.get('instant_sell_username_price')
+        if price:
+            return float(price)
+
+        price = await NftService.get_nft_collection_floor_price(USERNAMES_COLLECTION_ADDRESS)
+        if not price:
+            return
+
+        await r.setex(name='instant_sell_username_price', value=float(price), time=3600)
+
+        return float(price)
 
     @staticmethod
     async def add_number(user_number_id: int, price: float) -> None:

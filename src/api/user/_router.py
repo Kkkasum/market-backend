@@ -9,10 +9,8 @@ from ._schemas import (
     UserUsernamesResponse,
     UserHistoryResponse,
     AddUserRequest,
-    AddUserSwapRequest
 )
 from src.service.user import UserService
-from src.service.token import TokenService
 
 router = APIRouter()
 
@@ -160,52 +158,3 @@ async def add_user(data: AddUserRequest):
             status_code=status.HTTP_409_CONFLICT,
             detail=f'User {data.user_id} is exists'
         )
-
-
-@router.post(
-    '/swap',
-    responses={
-        status.HTTP_201_CREATED: {
-            'description': 'Add user swap and update user balance'
-        },
-        status.HTTP_404_NOT_FOUND: {
-            'description': 'Specified user not found'
-        },
-        status.HTTP_500_INTERNAL_SERVER_ERROR: {
-            'description': ''
-        }
-    },
-    status_code=status.HTTP_201_CREATED
-)
-async def add_user_swap(data: AddUserSwapRequest):
-    user_wallet = await UserService.get_user_wallet(data.user_id)
-    if not user_wallet:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'User {data.user_id} not found'
-        )
-
-    if data.from_token == 'TON':
-        to_token_price = await TokenService.get_ton_to_usdt_price()
-        volume = to_token_price * data.from_amount
-    elif data.from_token == 'USDT':
-        to_token_price = await TokenService.get_usdt_to_ton_price()
-        volume = data.from_amount
-    else:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'Token {data.from_token.upper()} not found'
-        )
-
-    to_amount = data.from_amount * to_token_price
-
-    await UserService.add_user_swap(
-        user_id=data.user_id,
-        ton_balance=user_wallet.ton_balance,
-        usdt_balance=user_wallet.usdt_balance,
-        from_token=data.from_token,
-        from_amount=data.from_amount,
-        to_token=data.to_token,
-        to_amount=to_amount,
-        volume=volume
-    )

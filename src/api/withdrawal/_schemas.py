@@ -1,4 +1,15 @@
+from enum import StrEnum
+
 from pydantic import BaseModel, Field
+
+
+class Network(StrEnum):
+    TRON = 'TRON'
+    TON = 'TON'
+
+
+class FeeResponse(BaseModel):
+    fee: int
 
 
 class WithdrawRequest(BaseModel):

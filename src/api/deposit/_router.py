@@ -1,16 +1,11 @@
 from fastapi import APIRouter, status, HTTPException
 
-from loguru import logger
-
 from ._schemas import (
     DepositAddressResponse,
     DepositTronRequest,
-    DepositTonRequest,
 )
-from src.common import config, MIN_TON_DEPOSIT
 from src.service.deposit import DepositService
 from src.service.user import UserService
-from src.service.history import HistoryService
 
 router = APIRouter()
 
@@ -46,62 +41,6 @@ async def add_tron_deposit(user_id: int, data: DepositTronRequest):
             amount=float(data.amount),
             tx_hash=data.tx_hash,
         )
-
-
-@router.post(
-    '/ton',
-    responses={
-        status.HTTP_200_OK: {
-            'description': 'Add ton deposit'
-        },
-        status.HTTP_400_BAD_REQUEST: {
-            'description': 'Deposit value is less than min ton deposit'
-        },
-        status.HTTP_404_NOT_FOUND: {
-            'description': 'Specified user not found'
-        }
-    }
-)
-async def add_ton_deposit(data: DepositTonRequest):
-    logger.success(data)
-    try:
-        res = await HistoryService.get_deposit_by_tx_hash(data.tx_hash)
-        if res:
-            return
-
-        tx = await DepositService.get_wallet_transaction(data.tx_hash)
-        if not tx:
-            return
-
-        msg = tx['in_msg']
-        if msg['destination'] != config.TON_WALLET_ADDRESS:
-            return
-
-        user_id = msg['message_content']['decoded']['comment']
-        user = await UserService.get_user_wallet(user_id)
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f'User {user_id} not found'
-            )
-
-        ton_deposit = msg['value'] / 10 ** 9
-        if ton_deposit < MIN_TON_DEPOSIT:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f'Deposit value {ton_deposit} is less than min ton deposit'
-            )
-
-        await UserService.add_deposit(
-            user_id=user.user_id,
-            ton_balance=user.ton_balance,
-            usdt_balance=user.usdt_balance,
-            token='TON',
-            amount=ton_deposit,
-            tx_hash=data.tx_hash,
-        )
-    except Exception as e:
-        logger.error(e)
 
 
 @router.get(

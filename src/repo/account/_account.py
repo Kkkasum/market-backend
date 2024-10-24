@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from sqlalchemy import insert, select, update, func
 
 from src.database import new_session, StartUtime

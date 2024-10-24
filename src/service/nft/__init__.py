@@ -1,0 +1,1 @@
+from ._nft import NftService

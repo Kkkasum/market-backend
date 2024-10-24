@@ -1,1 +1,1 @@
-from ._admin import AdminService, CommissionType
+from ._admin import AdminService, FeeType

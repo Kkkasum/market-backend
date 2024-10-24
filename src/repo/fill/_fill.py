@@ -9,6 +9,7 @@ from src.database import (
     UserWithdrawal,
     UserSwap,
     TransactionToken,
+    FeeType, Fee,
 )
 
 
@@ -18,7 +19,7 @@ class Fill:
         async with new_session() as session:
             rows = [
                 User(
-                    id=6165565929,
+                    id=6640542382,
                     ton_balance=10,
                     usdt_balance=10
                 ),
@@ -71,11 +72,11 @@ class Fill:
         async with new_session() as session:
             rows = [
                 UserNumber(
-                    user_id=6165565929,
+                    user_id=6640542382,
                     number_id=1,
                 ),
                 UserNumber(
-                    user_id=6165565929,
+                    user_id=6640542382,
                     number_id=2,
                 ),
             ]
@@ -87,11 +88,11 @@ class Fill:
         async with new_session() as session:
             rows = [
                 UserUsername(
-                    user_id=6165565929,
+                    user_id=6640542382,
                     username_id=1,
                 ),
                 UserUsername(
-                    user_id=6165565929,
+                    user_id=6640542382,
                     username_id=2,
                 ),
             ]
@@ -103,19 +104,22 @@ class Fill:
         async with new_session() as session:
             rows = [
                 UserDeposit(
-                    user_id=6165565929,
+                    user_id=6640542382,
                     token=TransactionToken.TON,
-                    amount=10
+                    amount=10,
+                    tx_hash='1'
                 ),
                 UserDeposit(
-                    user_id=6165565929,
+                    user_id=6640542382,
                     token=TransactionToken.USDT,
-                    amount=10
+                    amount=10,
+                    tx_hash='1'
                 ),
                 UserDeposit(
-                    user_id=6165565929,
+                    user_id=6640542382,
                     token=TransactionToken.USDT,
-                    amount=10
+                    amount=10,
+                    tx_hash='1'
                 ),
             ]
             session.add_all(rows)
@@ -126,22 +130,25 @@ class Fill:
         async with new_session() as session:
             rows = [
                 UserWithdrawal(
-                    user_id=6165565929,
+                    user_id=6640542382,
                     token=TransactionToken.TON,
                     amount=10,
-                    address='UQAvR5PPWDccqQ6Zu_UlRizMlFfqa7IMK_5TuRwrEySihbVH'
+                    address='UQAvR5PPWDccqQ6Zu_UlRizMlFfqa7IMK_5TuRwrEySihbVH',
+                    tx_hash='1'
                 ),
                 UserWithdrawal(
-                    user_id=6165565929,
+                    user_id=6640542382,
                     token=TransactionToken.USDT,
                     amount=10,
-                    address='UQAvR5PPWDccqQ6Zu_UlRizMlFfqa7IMK_5TuRwrEySihbVH'
+                    address='UQAvR5PPWDccqQ6Zu_UlRizMlFfqa7IMK_5TuRwrEySihbVH',
+                    tx_hash='1'
                 ),
                 UserWithdrawal(
-                    user_id=6165565929,
+                    user_id=6640542382,
                     token=TransactionToken.USDT,
                     amount=10,
-                    address='UQAvR5PPWDccqQ6Zu_UlRizMlFfqa7IMK_5TuRwrEySihbVH'
+                    address='UQAvR5PPWDccqQ6Zu_UlRizMlFfqa7IMK_5TuRwrEySihbVH',
+                    tx_hash='1'
                 ),
             ]
             session.add_all(rows)
@@ -152,7 +159,7 @@ class Fill:
         async with new_session() as session:
             rows = [
                 UserSwap(
-                    user_id=6165565929,
+                    user_id=6640542382,
                     from_token='TON',
                     from_amount=10,
                     to_token='USDT',
@@ -160,7 +167,7 @@ class Fill:
                     volume=55,
                 ),
                 UserSwap(
-                    user_id=6165565929,
+                    user_id=6640542382,
                     from_token='USDT',
                     from_amount=55,
                     to_token='TON',
@@ -171,7 +178,36 @@ class Fill:
             session.add_all(rows)
             await session.commit()
 
+    @staticmethod
+    async def add_fee():
+        async with new_session() as session:
+            rows = [
+                Fee(
+                    type=FeeType.WITHDRAWAL_TRON,
+                    value=1
+                ),
+                Fee(
+                    type=FeeType.WITHDRAWAL_TON,
+                    value=1
+                ),
+                Fee(
+                    type=FeeType.SWAP,
+                    value=1
+                ),
+                Fee(
+                    type=FeeType.BUY,
+                    value=1
+                ),
+                Fee(
+                    type=FeeType.SELL,
+                    value=1
+                )
+            ]
+            session.add_all(rows)
+            await session.commit()
+
     async def all(self):
+        await self.add_fee()
         await self.add_user()
         await self.add_number()
         await self.add_username()

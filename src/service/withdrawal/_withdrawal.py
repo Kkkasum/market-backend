@@ -30,7 +30,7 @@ class WithdrawalService:
 
     @staticmethod
     async def withdraw_ton(user_id: int, destination: str, amount: float) -> int | None:
-        client = TonapiClient(api_key=config.TONAPI_KEY, is_testnet=False)
+        client = TonapiClient(api_key=config.TONAPI_KEY, is_testnet=config.IS_TESTNET)
         mnemonics = config.MNEMONICS.split(' ')
 
         wallet, _, _, _ = HighloadWalletV3.from_mnemonic(client, mnemonics, wallet_id=239, timeout=128)
@@ -39,16 +39,12 @@ class WithdrawalService:
         if balance < 0.1:
             return 1
 
-        raw_account = await client.get_raw_account(wallet.address.to_str())
-        print(raw_account.status)
-
         print(f'Withdraw for user {user_id}, destination: {destination}, amount: {amount}')
-        await wallet.create_internal_msg()
         await wallet.transfer(destination=destination, amount=amount, state_init=wallet.state_init)
 
     @staticmethod
     async def withdraw_nft(user_id: int, destination: str, nft_address: str) -> int | None:
-        client = TonapiClient(api_key=config.TONAPI_KEY, is_testnet=True)
+        client = TonapiClient(api_key=config.TONAPI_KEY, is_testnet=config.IS_TESTNET)
         mnemonics = config.MNEMONICS.split(' ')
 
         wallet, _, _, _ = HighloadWalletV3.from_mnemonic(client, mnemonics, wallet_id=239, timeout=128)

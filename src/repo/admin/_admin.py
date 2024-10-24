@@ -3,36 +3,36 @@ from sqlalchemy import insert, select, update, delete
 from src.database import (
     new_session,
     User, UserStatus,
-    CommissionType, Commission
+    FeeType, Fee
 )
 
 
 class AdminRepo:
     @staticmethod
-    async def get_commissions() -> list[Commission]:
+    async def get_fees() -> list[Fee]:
         async with new_session() as session:
-            query = select(Commission)
+            query = select(Fee)
             res = (await session.execute(query)).scalars().all()
 
             return res
 
     @staticmethod
-    async def get_commission(commission_type: CommissionType) -> Commission:
+    async def get_fee(fee_type: FeeType) -> Fee:
         async with new_session() as session:
             query = (
-                select(Commission)
-                .where(Commission.type == commission_type)
+                select(Fee)
+                .where(Fee.type == fee_type)
             )
             res = (await session.execute(query)).scalar_one_or_none()
 
             return res
 
     @staticmethod
-    async def set_commission(commission_type: CommissionType, value: float) -> None:
+    async def set_fee(fee_type: FeeType, value: int) -> None:
         async with new_session() as session:
             stmt = (
-                update(Commission)
-                .where(Commission.type == commission_type)
+                update(Fee)
+                .where(Fee.type == fee_type)
                 .values(
                     value=value
                 )

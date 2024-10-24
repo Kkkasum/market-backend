@@ -1,8 +1,8 @@
 from src.service.user import User
 
 
-def format_commission(commission: float) -> str:
-    m = f'Текущая комиссия: <b>{commission * 100}</b>%'
+def format_fee(fee: float, extra: str) -> str:
+    m = f'Текущая комиссия: <b>{fee}</b>{extra}'
 
     return m
 

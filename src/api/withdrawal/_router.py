@@ -1,12 +1,54 @@
-from fastapi import APIRouter, status, HTTPException
+from fastapi import APIRouter, status, HTTPException, Query
 
-from ._schemas import WithdrawUsdtRequest, WithdrawTonRequest, WithdrawNumberRequest, WithdrawUsernameRequest
+from ._schemas import (
+    Network,
+    FeeResponse,
+    WithdrawUsdtRequest, WithdrawTonRequest, WithdrawNumberRequest, WithdrawUsernameRequest
+)
 from src.service.withdrawal import WithdrawalService
 from src.service.user import UserService
+from src.service.admin import AdminService, FeeType
 from src.service.number import NumberService, Status as NumberStatus
 from src.service.username import UsernameService, Status as UsernameStatus
 
 router = APIRouter()
+
+
+@router.get(
+    '/fee',
+    responses={
+        status.HTTP_200_OK: {
+            'model': FeeResponse,
+            'description': 'Returns fee for specified network'
+        },
+        status.HTTP_400_BAD_REQUEST: {
+            'description': 'Specified network is unavailable'
+        },
+        status.HTTP_422_UNPROCESSABLE_ENTITY: {
+            'description': 'Specified network is invalid'
+        }
+    }
+)
+async def get_fee(network: Network = Query()):
+    if network == Network.TRON:
+        fee = await AdminService.get_fee(FeeType.WITHDRAWAL_TRON)
+    elif network == Network.TON:
+        fee = await AdminService.get_fee(FeeType.WITHDRAWAL_TON)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f'Network {network} is invalid'
+        )
+
+    if not fee:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f'Network {network} not found'
+        )
+
+    return FeeResponse(
+        fee=fee
+    )
 
 
 @router.post(
@@ -35,13 +77,20 @@ async def withdraw_usdt(data: WithdrawUsdtRequest):
             detail=f'User {data.user_id} not found'
         )
 
+    fee = await AdminService.get_fee(FeeType.WITHDRAWAL_TRON)
+    if not fee:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f'Some server error occurred'
+        )
+
     if user.usdt_balance < data.amount:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f'User {data.user_id} has not enough balance'
         )
 
-    res = await WithdrawalService.withdraw_usdt(data.address, data.amount)
+    res = await WithdrawalService.withdraw_usdt(data.address, data.amount - fee)
     if not res:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -82,13 +131,20 @@ async def withdraw_ton(data: WithdrawTonRequest):
             detail=f'User {data.user_id} not found'
         )
 
+    fee = await AdminService.get_fee(FeeType.WITHDRAWAL_TON)
+    if not fee:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f'Some server error occurred'
+        )
+
     if user.ton_balance < data.amount:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f'User {data.user_id} has not enough balance'
         )
 
-    await WithdrawalService.withdraw_ton(data.user_id, data.address, data.amount)
+    await WithdrawalService.withdraw_ton(data.user_id, data.address, data.amount - fee)
     await UserService.add_withdrawal(
         user_id=user.user_id,
         ton_balance=user.ton_balance,
@@ -96,7 +152,7 @@ async def withdraw_ton(data: WithdrawTonRequest):
         token='TON',
         amount=data.amount,
         address=data.address,
-        tx_hash='123',
+        tx_hash='1',
     )
 
 

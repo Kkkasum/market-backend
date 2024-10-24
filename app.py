@@ -25,13 +25,13 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],
+    allow_origins=[config.ORIGIN_URL],
     allow_credentials=True,
     allow_methods=['GET', 'POST', 'PUT', 'OPTIONS'],
     allow_headers=['*']
 )
 
-app.include_router(api_router, prefix='/api', tags=['API'])
+app.include_router(api_router, prefix='/api')
 
 
 if __name__ == '__main__':

@@ -10,15 +10,9 @@ class DepositTronRequest(BaseModel):
     category: str
     coin: str
     amount: str
-    commission: str
+    fee: str
     address: str
     status: str
     tx_id: str
     created_at: int
     explorer_link: str
-
-
-class DepositTonRequest(BaseModel):
-    account_id: str
-    lt: int
-    tx_hash: str

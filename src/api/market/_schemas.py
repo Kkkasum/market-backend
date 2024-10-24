@@ -1,6 +1,13 @@
+from enum import StrEnum
+
 from pydantic import BaseModel, Field
 
 from src.service.market import MarketNumber, MarketUsername
+
+
+class InstantSellAsset(StrEnum):
+    NUMBER = 'NUMBER'
+    USERNAME = 'USERNAME'
 
 
 class MarketNumbersResponse(BaseModel):
@@ -9,6 +16,10 @@ class MarketNumbersResponse(BaseModel):
 
 class MarketUsernamesResponse(BaseModel):
     usernames: list[MarketUsername]
+
+
+class InstantSellPriceResponse(BaseModel):
+    price: str
 
 
 class AddMarketNumberRequest(BaseModel):
@@ -33,3 +44,11 @@ class BuyNumberRequest(BaseModel):
 class BuyUsernameRequest(BaseModel):
     user_id: int = Field(validation_alias='userId')
     username: str
+
+
+class InstantSellNumberRequest(BuyNumberRequest):
+    pass
+
+
+class InstantSellUsernameRequest(BuyUsernameRequest):
+    pass

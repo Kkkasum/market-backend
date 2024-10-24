@@ -11,7 +11,7 @@ def main_kb() -> InlineKeyboardMarkup:
 
     builder.button(
         text='Комиссии',
-        callback_data=MainCallbackData(page='commission')
+        callback_data=MainCallbackData(page='fee')
     )
     builder.button(
         text='Пользователи',
