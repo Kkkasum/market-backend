@@ -1,1 +1,1 @@
-from ._history import HistoryRepo, TransactionToken, SwapToken
+from ._history import HistoryRepo

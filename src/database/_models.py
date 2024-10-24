@@ -15,7 +15,7 @@ class User(Base):
     status: Mapped[UserStatus] = mapped_column(default=UserStatus.ACTIVE)
     ton_balance: Mapped[float] = mapped_column(server_default=text('0'))
     usdt_balance: Mapped[float] = mapped_column(server_default=text('0'))
-    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
 
     users_numbers: Mapped[list['UserNumber']] = relationship(
         back_populates='user'
@@ -117,7 +117,7 @@ class UserDeposit(Base):
     token: Mapped[TransactionToken]
     amount: Mapped[float]
     tx_hash: Mapped[str]
-    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
 
 
 class UserWithdrawal(Base):
@@ -129,7 +129,7 @@ class UserWithdrawal(Base):
     amount: Mapped[float]
     address: Mapped[str]
     tx_hash: Mapped[str]
-    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
 
 
 class UserSwap(Base):
@@ -142,7 +142,7 @@ class UserSwap(Base):
     to_token: Mapped[SwapToken]
     to_amount: Mapped[float]
     volume: Mapped[float]
-    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
 
 
 class MarketNumber(Base):
@@ -151,7 +151,7 @@ class MarketNumber(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_number_id: Mapped[int] = mapped_column(ForeignKey('users_numbers.id', ondelete='CASCADE'))
     price: Mapped[float]
-    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
 
     user_number: Mapped['UserNumber'] = relationship(
         back_populates='market_number', foreign_keys=[user_number_id]
@@ -164,7 +164,7 @@ class MarketUsername(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_username_id: Mapped[int] = mapped_column(ForeignKey('users_usernames.id', ondelete='CASCADE'))
     price: Mapped[float]
-    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
 
     user_username: Mapped['UserUsername'] = relationship(
         back_populates='market_username', foreign_keys=[user_username_id]

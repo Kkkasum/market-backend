@@ -25,3 +25,20 @@ def format_user(user: User) -> str:
     )
 
     return m
+
+
+def format_wallet(address: str) -> str:
+    m = f'Адрес кошелька: {address}'
+
+    return m
+
+
+def format_stats(period: str, withdrawals: int, deposits: int, swaps: int) -> str:
+    m = (
+        f'Статистика за {period}\n\n'
+        f'Количество выводов: {withdrawals}\n'
+        f'Количество вводов: {deposits}\n'
+        f'Количество свапов: {swaps}'
+    )
+
+    return m

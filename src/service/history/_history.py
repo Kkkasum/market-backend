@@ -1,5 +1,7 @@
+from datetime import datetime
+
 from ._models import DepositTx, WithdrawalTx, SwapTx
-from src.repo.history import HistoryRepo, TransactionToken, SwapToken
+from src.repo.history import HistoryRepo
 
 
 class HistoryService:
@@ -43,6 +45,14 @@ class HistoryService:
             SwapTx.model_validate(swap, from_attributes=True)
             for swap in swaps
         ]
+
+    @staticmethod
+    async def get_stats(start_time: datetime | None = None, end_time: datetime | None = None) -> tuple[int, int, int]:
+        return (
+            await HistoryRepo.count_withdrawals(start_time, end_time),
+            await HistoryRepo.count_deposits(start_time, end_time),
+            await HistoryRepo.count_swaps(start_time, end_time)
+        )
 
     @staticmethod
     async def add_withdrawal(user_id: int, token: str, amount: float, address: str, tx_hash: str) -> None:

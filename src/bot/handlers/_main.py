@@ -1,5 +1,6 @@
 from aiogram import Router, types, F
 from aiogram.filters import CommandStart
+from aiogram.fsm.context import FSMContext
 
 from src.common import config
 from src.bot.keyboards import MainCallbackData, main_kb
@@ -15,7 +16,10 @@ async def start(message: types.Message):
 
 
 @router.callback_query(MainCallbackData.filter(F.page == 'main'))
-async def start_callback(callback: types.CallbackQuery, callback_data: MainCallbackData):
+async def start_callback(callback: types.CallbackQuery, state: FSMContext, **_):
     m = 'Выберите раздел'
 
+    await state.clear()
+
+    await callback.message.delete()
     await callback.message.answer(text=m, reply_markup=main_kb())

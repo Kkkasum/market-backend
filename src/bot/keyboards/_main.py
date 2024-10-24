@@ -23,6 +23,17 @@ def main_kb() -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
+def return_main_kb() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+
+    builder.button(
+        text='⬅️ Вернуться',
+        callback_data=MainCallbackData(page='main')
+    )
+
+    return builder.as_markup()
+
+
 def back_kb(cb_data) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
 

@@ -14,7 +14,8 @@ router = Router()
 async def main_user_callback(callback: types.CallbackQuery, **_):
     m = 'Выберите действие'
 
-    await callback.message.edit_text(text=m, reply_markup=user_kb())
+    await callback.message.delete()
+    await callback.message.answer(text=m, reply_markup=user_kb())
 
 
 @router.callback_query(UserCallbackData.filter())

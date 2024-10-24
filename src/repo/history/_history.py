@@ -1,6 +1,8 @@
+from datetime import datetime
+
 from sqlalchemy import select, insert
 
-from src.database import new_session, TransactionToken, SwapToken, UserDeposit, UserWithdrawal, UserSwap
+from src.database import new_session, UserDeposit, UserWithdrawal, UserSwap
 
 
 class HistoryRepo:
@@ -102,3 +104,42 @@ class HistoryRepo:
             )
             await session.execute(stmt)
             await session.commit()
+
+    @staticmethod
+    async def count_withdrawals(start_time: datetime | None = None, end_time: datetime | None = None) -> int:
+        async with new_session() as session:
+            query = (
+                select(UserWithdrawal)
+                .where(UserWithdrawal.created_at.between(start_time, end_time))
+            ) if start_time and end_time else (
+                select(UserWithdrawal)
+            )
+            res = (await session.execute(query)).scalars().all()
+
+            return len(res)
+
+    @staticmethod
+    async def count_deposits(start_time: datetime | None = None, end_time: datetime | None = None) -> int:
+        async with new_session() as session:
+            query = (
+                select(UserDeposit)
+                .where(UserDeposit.created_at.between(start_time, end_time))
+            ) if start_time and end_time else (
+                select(UserDeposit)
+            )
+            res = (await session.execute(query)).scalars().all()
+
+            return len(res)
+
+    @staticmethod
+    async def count_swaps(start_time: datetime | None = None, end_time: datetime | None = None) -> int:
+        async with new_session() as session:
+            query = (
+                select(UserSwap)
+                .where(UserSwap.created_at.between(start_time, end_time))
+            ) if start_time and end_time else (
+                select(UserSwap)
+            )
+            res = (await session.execute(query)).scalars().all()
+
+            return len(res)

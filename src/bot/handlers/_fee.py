@@ -15,19 +15,22 @@ router = Router()
 async def main_fee_callback(callback: types.CallbackQuery, **_):
     m = 'Выберите комиссию'
 
-    await callback.message.edit_text(text=m, reply_markup=fee_kb())
+    await callback.message.delete()
+    await callback.message.answer(text=m, reply_markup=fee_kb())
 
 
 @router.callback_query(FeeCallbackData.filter())
 async def fee_callback(callback: types.CallbackQuery, callback_data: FeeCallbackData):
     c = await AdminService.get_fee(callback_data.c)
 
+    await callback.message.delete()
+
     if callback_data.c == FeeType.WITHDRAWAL_TRON:
-        await callback.message.edit_text(text=format_fee(c, extra=' USDT'), reply_markup=com_kb(callback_data.c))
+        await callback.message.answer(text=format_fee(c, extra=' USDT'), reply_markup=com_kb(callback_data.c))
     elif callback_data.c == FeeType.WITHDRAWAL_TON:
-        await callback.message.edit_text(text=format_fee(c, extra=' TON'), reply_markup=com_kb(callback_data.c))
+        await callback.message.answer(text=format_fee(c, extra=' TON'), reply_markup=com_kb(callback_data.c))
     else:
-        await callback.message.edit_text(text=format_fee(c, extra='%'), reply_markup=com_kb(callback_data.c))
+        await callback.message.answer(text=format_fee(c, extra='%'), reply_markup=com_kb(callback_data.c))
 
 
 @router.callback_query(SetFeeCallbackData.filter())
