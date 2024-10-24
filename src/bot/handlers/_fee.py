@@ -43,7 +43,7 @@ async def set_fee_callback(
 @router.message(StateFilter(FeeType.WITHDRAWAL_TRON))
 async def set_withdrawal_tron(message: types.Message, state: FSMContext):
     try:
-        c = int(message.text)
+        c = float(message.text)
         if c < 0:
             m = 'Неправильное значение (должно быть числом > 0)'
 
@@ -68,7 +68,7 @@ async def set_withdrawal_tron(message: types.Message, state: FSMContext):
 @router.message(StateFilter(FeeType.WITHDRAWAL_TON))
 async def set_withdrawal_ton(message: types.Message, state: FSMContext):
     try:
-        c = int(message.text)
+        c = float(message.text)
         if c < 0:
             m = 'Неправильное значение (должно быть числом > 0)'
 

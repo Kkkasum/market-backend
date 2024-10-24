@@ -28,7 +28,7 @@ class AdminRepo:
             return res
 
     @staticmethod
-    async def set_fee(fee_type: FeeType, value: int) -> None:
+    async def set_fee(fee_type: FeeType, value: int | float) -> None:
         async with new_session() as session:
             stmt = (
                 update(Fee)

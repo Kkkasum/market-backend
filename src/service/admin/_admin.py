@@ -65,7 +65,7 @@ class AdminService:
         return fee.value
 
     @staticmethod
-    async def set_fee(fee_type: FeeType, value: int) -> None:
+    async def set_fee(fee_type: FeeType, value: int | float) -> None:
         await r.set(fee_type, value)
 
         await AdminRepo.set_fee(fee_type, value)

@@ -179,7 +179,7 @@ class Fee(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     type: Mapped[FeeType]
-    value: Mapped[int] = mapped_column(server_default=text('0'))
+    value: Mapped[float] = mapped_column(server_default=text('0'))
 
 
 class StartUtime(Base):
