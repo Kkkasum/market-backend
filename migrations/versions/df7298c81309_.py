@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 89e31d697333
+Revision ID: df7298c81309
 Revises: 
-Create Date: 2024-10-24 21:39:34.214231
+Create Date: 2024-10-24 23:49:07.365347
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = '89e31d697333'
+revision: str = 'df7298c81309'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -53,7 +53,7 @@ def upgrade() -> None:
     sa.Column('status', sa.Enum('ACTIVE', 'BLOCKED', name='userstatus'), nullable=False),
     sa.Column('ton_balance', sa.Float(), server_default=sa.text('0'), nullable=False),
     sa.Column('usdt_balance', sa.Float(), server_default=sa.text('0'), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', postgresql.TIMESTAMP(), server_default=sa.text('now()'), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('users_addresses',
@@ -70,7 +70,7 @@ def upgrade() -> None:
     sa.Column('token', sa.Enum('TON', 'USDT', name='transactiontoken'), nullable=False),
     sa.Column('amount', sa.Float(), nullable=False),
     sa.Column('tx_hash', sa.String(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', postgresql.TIMESTAMP(), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -90,7 +90,7 @@ def upgrade() -> None:
     sa.Column('to_token', sa.Enum('TON', 'USDT', name='swaptoken'), nullable=False),
     sa.Column('to_amount', sa.Float(), nullable=False),
     sa.Column('volume', sa.Float(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', postgresql.TIMESTAMP(), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -109,7 +109,7 @@ def upgrade() -> None:
     sa.Column('amount', sa.Float(), nullable=False),
     sa.Column('address', sa.String(), nullable=False),
     sa.Column('tx_hash', sa.String(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', postgresql.TIMESTAMP(), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -117,7 +117,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_number_id', sa.Integer(), nullable=False),
     sa.Column('price', sa.Float(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', postgresql.TIMESTAMP(), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['user_number_id'], ['users_numbers.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -125,7 +125,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_username_id', sa.Integer(), nullable=False),
     sa.Column('price', sa.Float(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', postgresql.TIMESTAMP(), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['user_username_id'], ['users_usernames.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
