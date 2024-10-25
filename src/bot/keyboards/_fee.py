@@ -58,4 +58,6 @@ def com_kb(c: FeeType) -> InlineKeyboardMarkup:
         callback_data=MainCallbackData(page='fee')
     )
 
+    builder.adjust(1, 1)
+
     return builder.as_markup()
