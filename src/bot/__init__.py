@@ -1,6 +1,6 @@
 from aiogram import Dispatcher
 
-from src.bot.handlers import main_router, user_router, fee_router, wallet_router
+from src.bot.handlers import main_router, user_router, fee_router, wallet_router, stats_router
 
 
 def include_routers(dp: Dispatcher):
@@ -8,6 +8,6 @@ def include_routers(dp: Dispatcher):
         main_router,
         user_router,
         fee_router,
-        wallet_router
+        wallet_router,
+        stats_router
     )
-    

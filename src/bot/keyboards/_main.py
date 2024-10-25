@@ -17,6 +17,14 @@ def main_kb() -> InlineKeyboardMarkup:
         text='Пользователи',
         callback_data=MainCallbackData(page='user')
     )
+    builder.button(
+        text='Кошелек',
+        callback_data=MainCallbackData(page='wallet')
+    )
+    builder.button(
+        text='Статистика',
+        callback_data=MainCallbackData(page='stats')
+    )
 
     builder.adjust(1)
 
