@@ -1,38 +1,38 @@
-from sqlalchemy import insert, select, update, delete
+from sqlalchemy import select, update, delete
 
 from src.database import (
     new_session,
     User, UserStatus,
-    FeeType, Fee
+    Const, Constant
 )
 
 
 class AdminRepo:
     @staticmethod
-    async def get_fees() -> list[Fee]:
+    async def get_constants() -> list[Constant]:
         async with new_session() as session:
-            query = select(Fee)
+            query = select(Constant)
             res = (await session.execute(query)).scalars().all()
 
             return res
 
     @staticmethod
-    async def get_fee(fee_type: FeeType) -> Fee:
+    async def get_constant(const: Const) -> Constant:
         async with new_session() as session:
             query = (
-                select(Fee)
-                .where(Fee.type == fee_type)
+                select(Constant)
+                .where(Constant.const == const)
             )
             res = (await session.execute(query)).scalar_one_or_none()
 
             return res
 
     @staticmethod
-    async def set_fee(fee_type: FeeType, value: int | float) -> None:
+    async def set_constant(const: Const, value: int | float) -> None:
         async with new_session() as session:
             stmt = (
-                update(Fee)
-                .where(Fee.type == fee_type)
+                update(Constant)
+                .where(Constant.const == const)
                 .values(
                     value=value
                 )

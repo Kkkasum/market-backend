@@ -1,1 +1,2 @@
-from ._username import UsernameService, Username, UsernameWithOwner, Status
+from ._username import UsernameService, UsernameWithOwner, Status
+from ._models import Username

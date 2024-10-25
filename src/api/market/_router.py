@@ -1,7 +1,6 @@
-from fastapi import APIRouter, status, HTTPException, Query
+from fastapi import APIRouter, status, HTTPException
 
 from ._schemas import (
-    InstantSellAsset,
     MarketNumbersResponse,
     MarketUsernamesResponse,
     InstantSellPriceResponse,
@@ -10,11 +9,10 @@ from ._schemas import (
     BuyNumberRequest,
     BuyUsernameRequest,
     InstantSellNumberRequest,
-    InstantSellUsernameRequest
 )
 from src.common import config
 from src.service.wallet import Wallet
-from src.service.admin import AdminService, FeeType
+from src.service.admin import AdminService, Const
 from src.service.market import MarketService
 from src.service.user import UserService
 from src.service.number import NumberService, Status as NumberStatus
@@ -75,11 +73,11 @@ async def get_usernames():
 
 
 @router.get(
-    '/instant-sell/price',
+    '/instant-sell-number/price',
     responses={
         status.HTTP_200_OK: {
             'model': InstantSellPriceResponse,
-            'description': 'Returns instant sell price for specified asset'
+            'description': 'Returns instant sell number price'
         },
         status.HTTP_422_UNPROCESSABLE_ENTITY: {
             'description': 'Specified asset is invalid'
@@ -89,16 +87,8 @@ async def get_usernames():
         }
     }
 )
-async def get_instant_sell_price(asset: InstantSellAsset = Query()):
-    if asset == InstantSellAsset.NUMBER:
-        price = await MarketService.get_instant_sell_number_price()
-    elif asset == InstantSellAsset.USERNAME:
-        price = await MarketService.get_instant_sell_username_price()
-    else:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f'Asset {asset} is invalid'
-        )
+async def get_instant_sell_number_price():
+    price = await MarketService.get_instant_sell_number_price()
 
     if not price:
         raise HTTPException(
@@ -106,8 +96,11 @@ async def get_instant_sell_price(asset: InstantSellAsset = Query()):
             detail='Some server error occurred'
         )
 
+    instant_sell_perc = await AdminService.get_constant(Const.INSTANT_SELL_PERC)
+    instant_sell_price = price - (price / 100 * instant_sell_perc)
+
     return InstantSellPriceResponse(
-        price=str(price)
+        price=str(instant_sell_price)
     )
 
 
@@ -178,8 +171,8 @@ async def add_username(data: AddMarketUsernameRequest):
 )
 async def buy_number(data: BuyNumberRequest):
     buy_fee, sell_fee = (
-        await AdminService.get_fee(FeeType.BUY) / 100,
-        await AdminService.get_fee(FeeType.SELL) / 100
+        await AdminService.get_constant(Const.FEE_BUY) / 100,
+        await AdminService.get_constant(Const.FEE_SELL) / 100
     )
     if not buy_fee or not sell_fee or buy_fee > 1 or sell_fee > 1 or buy_fee < 0 or sell_fee < 0:
         raise HTTPException(
@@ -249,8 +242,8 @@ async def buy_number(data: BuyNumberRequest):
 )
 async def buy_username(data: BuyUsernameRequest):
     buy_fee, sell_fee = (
-        await AdminService.get_fee(FeeType.BUY) / 100,
-        await AdminService.get_fee(FeeType.SELL) / 100
+        await AdminService.get_constant(Const.FEE_BUY) / 100,
+        await AdminService.get_constant(Const.FEE_SELL) / 100
     )
     if not buy_fee or not sell_fee or buy_fee > 1 or sell_fee > 1 or buy_fee < 0 or sell_fee < 0:
         raise HTTPException(
@@ -298,7 +291,7 @@ async def buy_username(data: BuyUsernameRequest):
 
 
 @router.post(
-    '/instant-sell/number',
+    '/instant-sell-number',
     responses={
         status.HTTP_201_CREATED: {
             'description': 'Instant sells number for specified user'
@@ -355,70 +348,6 @@ async def instant_sell_number(data: InstantSellNumberRequest):
         )
 
     await UserService.update_number_owner(user_id=0, number_id=number.id)
-    await UserService.update_ton_balance(user_id=data.user_id, new_ton_balance=user.ton_balance + price)
-
-
-@router.post(
-    '/instant-sell/username',
-    responses={
-        status.HTTP_201_CREATED: {
-            'description': 'Instant sells number for specified user'
-        },
-        status.HTTP_400_BAD_REQUEST: {
-            'description': 'Specified user has no enough balance'
-        },
-        status.HTTP_405_METHOD_NOT_ALLOWED: {
-            'description': 'Specified number is not assigned to specified user'
-        },
-        status.HTTP_500_INTERNAL_SERVER_ERROR: {
-            'description': 'Some server error occurred'
-        }
-    },
-    status_code=status.HTTP_201_CREATED
-)
-async def instant_sell_username(data: InstantSellUsernameRequest):
-    user = await UserService.get_user_wallet(data.user_id)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'User {data.user_id} not found'
-        )
-
-    username = await UsernameService.get_username(data.username)
-    if not username:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'Username {data.username} not found'
-        )
-
-    if data.user_id != username.owner_id:
-        raise HTTPException(
-            status_code=status.HTTP_405_METHOD_NOT_ALLOWED,
-            detail=f'Username {data.username} is not assigned to user {data.user_id}'
-        )
-
-    price = await MarketService.get_instant_sell_username_price()
-    if not price:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Some server error occurred'
-        )
-
-    wallet = Wallet(address=config.TON_WALLET_ADDRESS, is_testnet=config.IS_TESTNET)
-    balance = await wallet.get_balance()
-    if not balance:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Some server error occurred'
-        )
-
-    if balance < price:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Some server error occurred'
-        )
-
-    await UserService.update_username_owner(user_id=0, username_id=username.id)
     await UserService.update_ton_balance(user_id=data.user_id, new_ton_balance=user.ton_balance + price)
 
 

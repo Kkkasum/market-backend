@@ -1,1 +1,1 @@
-from ._admin import AdminRepo, FeeType
+from ._admin import AdminRepo, Const

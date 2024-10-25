@@ -1,4 +1,4 @@
-from sqlalchemy import insert, select, update, delete
+from sqlalchemy import insert, select, update
 from sqlalchemy.orm import joinedload, selectinload
 
 from src.database import new_session, User, UserNumber, UserUsername, UserAddress
@@ -66,6 +66,14 @@ class UserRepo:
                 )
             )
             res = (await session.execute(query)).scalar_one_or_none()
+
+            return res
+
+    @staticmethod
+    async def get_users_ids() -> list[int] | None:
+        async with new_session() as session:
+            query = select(User.id)
+            res = (await session.execute(query)).scalars().all()
 
             return res
 

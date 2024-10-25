@@ -2,7 +2,7 @@ from fastapi import APIRouter, status, HTTPException
 
 from ._schemas import FeeResponse, AddSwapRequest
 from src.service.swap import SwapService
-from src.service.admin import AdminService, FeeType
+from src.service.admin import AdminService, Const
 from src.service.user import UserService
 from src.service.token import TokenService
 
@@ -41,7 +41,7 @@ async def get_is_swap_available():
     }
 )
 async def get_swap_fee():
-    fee = await AdminService.get_fee(FeeType.SWAP)
+    fee = await AdminService.get_constant(Const.FEE_SWAP)
     if not fee:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -88,7 +88,7 @@ async def add_swap(data: AddSwapRequest):
             detail=f'Token {data.from_token.upper()} not found'
         )
 
-    fee = await AdminService.get_fee(FeeType.SWAP)
+    fee = await AdminService.get_constant(Const.FEE_SWAP)
     if not fee or fee > 100 or fee < 0:
         raise HTTPException(
             status.HTTP_500_INTERNAL_SERVER_ERROR,

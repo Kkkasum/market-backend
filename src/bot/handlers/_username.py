@@ -17,7 +17,7 @@ async def main_username_callback(callback: types.CallbackQuery, state: FSMContex
 
 
 @router.message(StateFilter('username'))
-async def username(message: types.Message, state: FSMContext):
+async def get_username(message: types.Message, state: FSMContext):
     username = message.text.replace('+', '').replace(' ', '')
 
     address = await UsernameService.get_address_by_username(username)

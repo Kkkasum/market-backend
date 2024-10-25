@@ -1,1 +1,1 @@
-from ._admin import AdminService, FeeType
+from ._admin import AdminService, Const

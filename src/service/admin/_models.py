@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
-from src.repo.admin import FeeType
+from src.repo.admin import Const
 
 
-class Fee(BaseModel):
-    type: FeeType
+class GetConst(BaseModel):
+    const: Const
     value: float

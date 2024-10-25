@@ -1,4 +1,4 @@
-from sqlalchemy import select, insert, update, delete
+from sqlalchemy import select, insert, delete
 from sqlalchemy.orm import joinedload
 
 from src.database import new_session, Username

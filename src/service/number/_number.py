@@ -1,6 +1,6 @@
 from pytoniq_core import Slice, Cell, Address
 
-from ._models import Status, Number, NumberWithOwner, MarketNumber
+from ._models import Status, NumberWithOwner, MarketNumber
 from src.common import MAINNET_BALANCER, NUMBERS_COLLECTION_ADDRESS
 from src.repo.number import NumberRepo
 

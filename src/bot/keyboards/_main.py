@@ -10,8 +10,8 @@ def main_kb() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
 
     builder.button(
-        text='Комиссии',
-        callback_data=MainCallbackData(page='fee')
+        text='Комиссии и параметры',
+        callback_data=MainCallbackData(page='const')
     )
     builder.button(
         text='Пользователи',

@@ -7,9 +7,9 @@ from ._schemas import (
 )
 from src.service.withdrawal import WithdrawalService
 from src.service.user import UserService
-from src.service.admin import AdminService, FeeType
-from src.service.number import NumberService, Status as NumberStatus
-from src.service.username import UsernameService, Status as UsernameStatus
+from src.service.admin import AdminService, Const
+from src.service.number import NumberService
+from src.service.username import UsernameService
 
 router = APIRouter()
 
@@ -31,9 +31,9 @@ router = APIRouter()
 )
 async def get_fee(network: Network = Query()):
     if network == Network.TRON:
-        fee = await AdminService.get_fee(FeeType.WITHDRAWAL_TRON)
+        fee = await AdminService.get_constant(Const.FEE_WITHDRAWAL_TRON)
     elif network == Network.TON:
-        fee = await AdminService.get_fee(FeeType.WITHDRAWAL_TON)
+        fee = await AdminService.get_constant(Const.FEE_WITHDRAWAL_TON)
     else:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -77,7 +77,7 @@ async def withdraw_usdt(data: WithdrawUsdtRequest):
             detail=f'User {data.user_id} not found'
         )
 
-    fee = await AdminService.get_fee(FeeType.WITHDRAWAL_TRON)
+    fee = await AdminService.get_constant(Const.FEE_WITHDRAWAL_TRON)
     if not fee:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -131,7 +131,7 @@ async def withdraw_ton(data: WithdrawTonRequest):
             detail=f'User {data.user_id} not found'
         )
 
-    fee = await AdminService.get_fee(FeeType.WITHDRAWAL_TON)
+    fee = await AdminService.get_constant(Const.FEE_WITHDRAWAL_TON)
     if not fee:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

@@ -1,6 +1,6 @@
 from pytoniq_core import Address, Slice, Cell
 
-from ._models import Status, Username, UsernameWithOwner, MarketUsername
+from ._models import Status, UsernameWithOwner, MarketUsername
 from src.common import MAINNET_BALANCER, USERNAMES_COLLECTION_ADDRESS
 from src.repo.username import UsernameRepo
 

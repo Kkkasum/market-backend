@@ -5,6 +5,6 @@ from ._models import (
     User, Number, Username, UserAddress, UserNumber, UserUsername,
     UserDeposit, UserWithdrawal, UserSwap,
     MarketNumber, MarketUsername,
-    FeeType, Fee,
+    Const, Constant,
     StartUtime
 )

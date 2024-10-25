@@ -5,7 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import BIGINT, TIMESTAMP
 
 from ._db import Base
-from ._enums import UserStatus, TransactionToken, SwapToken, FeeType
+from ._enums import UserStatus, TransactionToken, SwapToken, Const
 
 
 class User(Base):
@@ -171,14 +171,14 @@ class MarketUsername(Base):
     )
 
 
-class Fee(Base):
-    __tablename__ = 'fees'
+class Constant(Base):
+    __tablename__ = 'constants'
     __table_args__ = (
-        UniqueConstraint('type'),
+        UniqueConstraint('const'),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    type: Mapped[FeeType]
+    const: Mapped[Const]
     value: Mapped[float] = mapped_column(server_default=text('0'))
 
 

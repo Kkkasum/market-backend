@@ -17,7 +17,7 @@ async def main_number_callback(callback: types.CallbackQuery, state: FSMContext,
 
 
 @router.message(StateFilter('number'))
-async def number(message: types.Message, state: FSMContext):
+async def get_number(message: types.Message, state: FSMContext):
     number = message.text.replace('+', '').replace(' ', '')
 
     address = await NumberService.get_address_by_number(number)

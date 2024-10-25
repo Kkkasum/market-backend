@@ -106,6 +106,10 @@ class UserService:
         )
 
     @staticmethod
+    async def get_users_ids() -> list[int] | None:
+        return await UserRepo.get_users_ids()
+
+    @staticmethod
     async def get_user_wallet(user_id: int) -> UserWallet | None:
         user_wallet = await UserRepo.get_user_wallet(user_id)
         if not user_wallet:

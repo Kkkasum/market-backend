@@ -1,26 +1,33 @@
 from src.service.user import User
 
 
-def format_fee(fee: float, extra: str) -> str:
-    m = f'Текущая комиссия: <b>{fee}</b>{extra}'
+def format_const(const: float, extra: str) -> str:
+    m = f'Текущая значение: <b>{const}</b>{extra}'
 
     return m
 
 
-def format_user(user: User) -> str:
+def format_number(number: str) -> str:
+    m = f'+{number[0:3]} {number[3:7]} {number[7:11]}'
+
+    return m
+
+
+def format_user(user_id: int, user: User) -> str:
     m = (
-        f'TON: {user.ton_balance}\n'
-        f'USDT: {user.usdt_balance}\n\n'
-        f'Numbers:'
-        f'{[
-            f'{i}. {n.number}\n'
+        f'<b>User ID</b>: {user_id}\n'
+        f'<b>TON</b>: {user.ton_balance}\n'
+        f'<b>USDT</b>: {user.usdt_balance}\n\n'
+        f'<b>Numbers</b>:\n'
+        f'{'\n'.join([
+            f'{i + 1}. {format_number(n.number)}'
             for i, n in enumerate(user.numbers)
-        ]}\n'
-        f'Usernames:'
-        f'{[
-            f'{i}. {un.username}\n'
+        ])}\n\n'
+        f'<b>Usernames</b>:\n'
+        f'{'\n'.join([
+            f'{i + 1}. @{un.username}'
             for i, un in enumerate(user.usernames)
-        ]}'
+        ])}'
     )
 
     return m
