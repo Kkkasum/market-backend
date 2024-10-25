@@ -58,5 +58,9 @@ class NumberService:
             return number
 
     @staticmethod
+    async def get_address_by_number(number: str) -> str | None:
+        return await NumberRepo.get_address_by_number(number)
+
+    @staticmethod
     async def delete_number(number: str) -> None:
         await NumberRepo.delete_number(number)

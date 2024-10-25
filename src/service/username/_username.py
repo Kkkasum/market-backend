@@ -60,5 +60,9 @@ class UsernameService:
             return username
 
     @staticmethod
+    async def get_address_by_username(username: str) -> str | None:
+        return await UsernameRepo.get_address_by_username(username)
+
+    @staticmethod
     async def delete_username(username: str) -> None:
         await UsernameRepo.delete_number(username)

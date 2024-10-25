@@ -34,6 +34,17 @@ class UsernameRepo:
             return res
 
     @staticmethod
+    async def get_address_by_username(username: str) -> str | None:
+        async with new_session() as session:
+            query = (
+                select(Username.address)
+                .where(Username.username == username)
+            )
+            res = (await session.execute(query)).scalar_one_or_none()
+
+            return res
+
+    @staticmethod
     async def delete_number(username: str) -> None:
         async with new_session() as session:
             stmt = (

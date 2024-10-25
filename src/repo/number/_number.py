@@ -34,6 +34,17 @@ class NumberRepo:
             return res
 
     @staticmethod
+    async def get_address_by_number(number: str) -> str | None:
+        async with new_session() as session:
+            query = (
+                select(Number.address)
+                .where(Number.number == number)
+            )
+            res = (await session.execute(query)).scalar_one_or_none()
+
+            return res
+
+    @staticmethod
     async def delete_number(number: str) -> None:
         async with new_session() as session:
             stmt = (
