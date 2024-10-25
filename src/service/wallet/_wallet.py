@@ -70,6 +70,8 @@ class Wallet:
                     balance = int(res['accounts'][0]['balance']) / 10 ** 9
                 except ValueError:
                     return
+                except IndexError:
+                    return
 
                 await r.setex(name='balance', value=balance, time=120)
 
