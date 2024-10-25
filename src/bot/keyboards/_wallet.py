@@ -24,4 +24,6 @@ def wallet_kb() -> InlineKeyboardMarkup:
         callback_data=MainCallbackData(page='main')
     )
 
+    builder.adjust(2, 1)
+
     return builder.as_markup()
