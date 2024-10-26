@@ -1,11 +1,11 @@
 from fastapi import APIRouter, status, HTTPException
 
+from src.service.deposit import DepositService
+from src.service.user import UserService
 from ._schemas import (
     DepositAddressResponse,
     DepositTronRequest,
 )
-from src.service.deposit import DepositService
-from src.service.user import UserService
 
 router = APIRouter()
 
@@ -65,7 +65,7 @@ async def get_deposit_address(network: str, user_id: int):
                 deposit_address=deposit_address
             )
 
-        deposit_address = await DepositService.get_deposit_usdt_address(user_id)
+        deposit_address = await DepositService.get_deposit_tron_address(user_id)
         if not deposit_address:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
