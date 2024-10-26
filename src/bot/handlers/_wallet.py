@@ -2,11 +2,16 @@ from aiogram import Router, types, F
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 
+from src.bot.keyboards import (
+    MainCallbackData,
+    WalletCallbackData,
+    wallet_kb,
+    return_main_kb,
+)
 from src.common import config
-from src.bot.keyboards import MainCallbackData, WalletCallbackData, wallet_kb, return_main_kb
 from src.service.withdrawal import WithdrawalService
-from src.utils.formatters import format_wallet
 from src.utils import messages as msg
+from src.utils.formatters import format_wallet
 
 router = Router()
 
@@ -14,7 +19,9 @@ router = Router()
 @router.callback_query(MainCallbackData.filter(F.page == 'wallet'))
 async def main_wallet_callback(callback: types.CallbackQuery, **_):
     await callback.message.delete()
-    await callback.message.answer(text=format_wallet(config.TON_WALLET_ADDRESS), reply_markup=wallet_kb())
+    await callback.message.answer(
+        text=format_wallet(config.TON_WALLET_ADDRESS), reply_markup=wallet_kb()
+    )
 
 
 @router.callback_query(WalletCallbackData.filter(F.action == 'ton'))
@@ -43,7 +50,9 @@ async def transfer_ton(message: types.Message, state: FSMContext):
         await message.answer(text=m, reply_markup=return_main_kb())
         return
 
-    await WithdrawalService.withdraw_ton(user_id=1, destination=destination, amount=amount)
+    await WithdrawalService.withdraw_ton(
+        user_id=config.ADMIN_ID, destination=destination, amount=amount
+    )
 
     await state.clear()
 
@@ -58,6 +67,8 @@ async def transfer_nft(message: types.Message, state: FSMContext):
         await message.answer(text=m, reply_markup=return_main_kb())
         return
 
-    await WithdrawalService.withdraw_nft(user_id=1, destination=destination, nft_address=nft_address)
+    await WithdrawalService.withdraw_nft(
+        user_id=config.ADMIN_ID, destination=destination, nft_address=nft_address
+    )
 
     await state.clear()

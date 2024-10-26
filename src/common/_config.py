@@ -7,6 +7,7 @@ class Config(BaseSettings):
     ORIGIN_URL: str
 
     IS_TESTNET: bool = False
+    TONAPI_KEY: str
     TONCENTER_API_KEY: str
     TONCENTER_API_KEY_TESTNET: str
 
@@ -32,7 +33,9 @@ class Config(BaseSettings):
     def DB_URI(self) -> str:
         return f'postgresql+asyncpg://{self.PG_USER}:{self.PG_PASS}@{self.PG_HOST}:{self.PG_PORT}/{self.PG_NAME}'
 
-    model_config = SettingsConfigDict(env_file=BASE_DIR/'.env', env_file_encoding='utf-8', extra='ignore')
+    model_config = SettingsConfigDict(
+        env_file=BASE_DIR / '.env', env_file_encoding='utf-8', extra='ignore'
+    )
 
 
 config = Config()

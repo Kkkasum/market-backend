@@ -3,7 +3,12 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 
 from src.bot.keyboards import (
-    MainCallbackData, ConstCallbackData, SetConstCallbackData, back_kb, const_kb, com_kb
+    MainCallbackData,
+    ConstCallbackData,
+    SetConstCallbackData,
+    back_kb,
+    const_kb,
+    com_kb,
 )
 from src.service.admin import AdminService, Const
 from src.utils.formatters import format_const
@@ -20,22 +25,35 @@ async def main_const_callback(callback: types.CallbackQuery, **_):
 
 
 @router.callback_query(ConstCallbackData.filter())
-async def const_callback(callback: types.CallbackQuery, callback_data: ConstCallbackData):
+async def const_callback(
+    callback: types.CallbackQuery, callback_data: ConstCallbackData
+):
     c = await AdminService.get_constant(callback_data.c)
 
     await callback.message.delete()
 
     if callback_data.c == Const.FEE_WITHDRAWAL_TRON:
-        await callback.message.answer(text=format_const(c, extra=' USDT'), reply_markup=com_kb(callback_data.c))
-    elif callback_data.c == Const.FEE_WITHDRAWAL_TON or callback_data.c == Const.MAX_INSTANT_SELL:
-        await callback.message.answer(text=format_const(c, extra=' TON'), reply_markup=com_kb(callback_data.c))
+        await callback.message.answer(
+            text=format_const(c, extra=' USDT'), reply_markup=com_kb(callback_data.c)
+        )
+    elif (
+        callback_data.c == Const.FEE_WITHDRAWAL_TON
+        or callback_data.c == Const.MAX_INSTANT_SELL
+    ):
+        await callback.message.answer(
+            text=format_const(c, extra=' TON'), reply_markup=com_kb(callback_data.c)
+        )
     else:
-        await callback.message.answer(text=format_const(c, extra='%'), reply_markup=com_kb(callback_data.c))
+        await callback.message.answer(
+            text=format_const(c, extra='%'), reply_markup=com_kb(callback_data.c)
+        )
 
 
 @router.callback_query(SetConstCallbackData.filter())
 async def set_constant_callback(
-    callback: types.CallbackQuery, callback_data: SetConstCallbackData, state: FSMContext
+    callback: types.CallbackQuery,
+    callback_data: SetConstCallbackData,
+    state: FSMContext,
 ):
     m = 'Введите новое значение'
 
@@ -62,7 +80,9 @@ async def set_instant_sell_perc(message: types.Message, state: FSMContext):
     else:
         m = 'Новое значение установлено'
 
-        await message.answer(text=m, reply_markup=back_kb(MainCallbackData(page='const')))
+        await message.answer(
+            text=m, reply_markup=back_kb(MainCallbackData(page='const'))
+        )
 
         await AdminService.set_constant(Const.INSTANT_SELL_PERC, c)
         await state.clear()
@@ -87,7 +107,9 @@ async def set_max_instant_sell(message: types.Message, state: FSMContext):
     else:
         m = 'Новое значение установлено'
 
-        await message.answer(text=m, reply_markup=back_kb(MainCallbackData(page='const')))
+        await message.answer(
+            text=m, reply_markup=back_kb(MainCallbackData(page='const'))
+        )
 
         await AdminService.set_constant(Const.MAX_INSTANT_SELL, c)
         await state.clear()
@@ -112,7 +134,9 @@ async def set_withdrawal_tron(message: types.Message, state: FSMContext):
     else:
         m = 'Новая комиссия установлена'
 
-        await message.answer(text=m, reply_markup=back_kb(MainCallbackData(page='const')))
+        await message.answer(
+            text=m, reply_markup=back_kb(MainCallbackData(page='const'))
+        )
 
         await AdminService.set_constant(Const.FEE_WITHDRAWAL_TRON, c)
         await state.clear()
@@ -137,7 +161,9 @@ async def set_withdrawal_ton(message: types.Message, state: FSMContext):
     else:
         m = 'Новая комиссия установлена'
 
-        await message.answer(text=m, reply_markup=back_kb(MainCallbackData(page='const')))
+        await message.answer(
+            text=m, reply_markup=back_kb(MainCallbackData(page='const'))
+        )
 
         await AdminService.set_constant(Const.FEE_WITHDRAWAL_TON, c)
         await state.clear()
@@ -162,7 +188,9 @@ async def set_swap(message: types.Message, state: FSMContext):
     else:
         m = 'Новая комиссия установлена'
 
-        await message.answer(text=m, reply_markup=back_kb(MainCallbackData(page='const')))
+        await message.answer(
+            text=m, reply_markup=back_kb(MainCallbackData(page='const'))
+        )
 
         await AdminService.set_constant(Const.FEE_SWAP, c)
         await state.clear()
@@ -187,7 +215,9 @@ async def set_buy(message: types.Message, state: FSMContext):
     else:
         m = 'Новая комиссия установлено'
 
-        await message.answer(text=m, reply_markup=back_kb(MainCallbackData(page='const')))
+        await message.answer(
+            text=m, reply_markup=back_kb(MainCallbackData(page='const'))
+        )
 
         await AdminService.set_constant(Const.FEE_BUY, c)
         await state.clear()
@@ -212,7 +242,9 @@ async def set_sell(message: types.Message, state: FSMContext):
     else:
         m = 'Новая комиссия установлено'
 
-        await message.answer(text=m, reply_markup=back_kb(MainCallbackData(page='const')))
+        await message.answer(
+            text=m, reply_markup=back_kb(MainCallbackData(page='const'))
+        )
 
         await AdminService.set_constant(Const.FEE_SELL, c)
         await state.clear()
