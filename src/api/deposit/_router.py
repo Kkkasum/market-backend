@@ -21,13 +21,14 @@ router = APIRouter()
     },
 )
 async def add_tron_deposit(user_id: int, data: DepositTronRequest):
+    print(data.coin)
     user = await UserService.get_user_wallet(user_id)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f'User {user_id} not found'
         )
 
-    if 'USDT-TRC20' in data.coin and data.status == 'confirmed':
+    if 'USDT-TRC20' in data.coin and data.status != 'network_error':
         await UserService.add_deposit(
             user_id=user_id,
             ton_balance=user.ton_balance,

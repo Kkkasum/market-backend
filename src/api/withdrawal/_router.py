@@ -50,7 +50,7 @@ async def get_fee(network: Network = Query()):
             detail=f'Network {network} not found',
         )
 
-    return FeeResponse(fee=fee)
+    return FeeResponse(fee=str(fee))
 
 
 @router.post(
@@ -96,7 +96,7 @@ async def withdraw_usdt(data: WithdrawUsdtRequest):
         )
 
     await UserService.add_withdrawal(
-        user_id=user.user_id,
+        user_id=data.user_id,
         ton_balance=user.ton_balance,
         usdt_balance=user.usdt_balance,
         token='USDT',
@@ -134,7 +134,7 @@ async def withdraw_ton(data: WithdrawTonRequest):
             detail=f'Some server error occurred',
         )
 
-    if user.ton_balance < data.amount:
+    if user.ton_balance <= data.amount:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f'User {data.user_id} has not enough balance',
@@ -145,7 +145,7 @@ async def withdraw_ton(data: WithdrawTonRequest):
     )
     if isinstance(msg_hash, str):
         await UserService.add_withdrawal(
-            user_id=user.user_id,
+            user_id=data.user_id,
             ton_balance=user.ton_balance,
             usdt_balance=user.usdt_balance,
             token='TON',

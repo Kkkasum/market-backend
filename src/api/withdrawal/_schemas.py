@@ -9,7 +9,7 @@ class Network(StrEnum):
 
 
 class FeeResponse(BaseModel):
-    fee: str
+    fee: str | None
 
 
 class WithdrawRequest(BaseModel):

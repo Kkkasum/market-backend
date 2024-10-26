@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 
 
 class FeeResponse(BaseModel):
-    fee: int
+    fee: int | None
 
 
 class AddSwapRequest(BaseModel):
