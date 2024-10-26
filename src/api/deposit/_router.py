@@ -36,9 +36,9 @@ async def add_tron_deposit(user_id: int, data: DepositTronRequest):
             user_id=user_id,
             ton_balance=user.ton_balance,
             usdt_balance=user.usdt_balance,
-            token=data.token,
+            token='USDT',
             amount=float(data.amount),
-            tx_hash=data.tx_hash,
+            tx_hash=data.tx_id,
         )
 
 
