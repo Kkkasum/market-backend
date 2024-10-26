@@ -1,5 +1,6 @@
 import aiohttp
 from loguru import logger
+from pytoniq_core import begin_cell
 from tonutils.client import TonapiClient
 from tonutils.wallet import HighloadWalletV3
 
@@ -38,7 +39,11 @@ class WithdrawalService:
         logger.success(
             f'Withdraw for user {user_id}, destination: {destination}, amount: {amount}'
         )
-        message_hash = await wallet.transfer(destination=destination, amount=amount)
+        message_hash = await wallet.transfer(
+            destination=destination,
+            amount=amount,
+            body=begin_cell().store_uint(0, 32).store_string(str(user_id)).end_cell(),
+        )
 
         return message_hash
 
