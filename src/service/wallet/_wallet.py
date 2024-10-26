@@ -1,7 +1,7 @@
 import aiohttp
 
-from ._models import Message, NftTransfer
 from src.common import config, r
+from ._models import Message, NftTransfer
 
 
 class Wallet:
@@ -16,16 +16,13 @@ class Wallet:
             return float(balance)
 
         url = 'https://b2bwallet.io/api/v1/balance'
-        headers = {
-            'X-Api-Key': config.B2B_API_KEY,
-            'Content-Type': 'application/json'
-        }
-        json = {
+        headers = {'X-Api-Key': config.B2B_API_KEY}
+        params = {
             'coin': 'USDT-TRC20',
         }
 
         async with aiohttp.ClientSession() as session:
-            async with session.get(url, headers=headers, json=json) as resp:
+            async with session.get(url, headers=headers, params=params) as resp:
                 if resp.status != 200:
                     return
 
@@ -36,7 +33,7 @@ class Wallet:
                 except ValueError:
                     return
 
-                await r.set(name='tron_balance', value=balance, time=120)
+                await r.setex(name='tron_balance', value=balance, time=120)
 
                 return balance
 
@@ -52,12 +49,13 @@ class Wallet:
         )
         url = base_url + '/accountStates'
         headers = {
-            'X-Api-Key': config.TONCENTER_API_KEY_TESTNET if self.is_testnet else config.TONCENTER_API_KEY
+            'X-Api-Key': (
+                config.TONCENTER_API_KEY_TESTNET
+                if self.is_testnet
+                else config.TONCENTER_API_KEY
+            )
         }
-        params = {
-            'address': self.address,
-            'include_boc': 'false'
-        }
+        params = {'address': self.address, 'include_boc': 'false'}
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=headers, params=params) as resp:
@@ -67,7 +65,7 @@ class Wallet:
                 res = await resp.json()
 
                 try:
-                    balance = int(res['accounts'][0]['balance']) / 10 ** 9
+                    balance = int(res['accounts'][0]['balance']) / 10**9
                 except ValueError:
                     return
                 except IndexError:
@@ -85,7 +83,11 @@ class Wallet:
         )
         url = base_url + '/messages'
         headers = {
-            'X-Api-Key': config.TONCENTER_API_KEY_TESTNET if self.is_testnet else config.TONCENTER_API_KEY
+            'X-Api-Key': (
+                config.TONCENTER_API_KEY_TESTNET
+                if self.is_testnet
+                else config.TONCENTER_API_KEY
+            )
         }
         params = {
             'destination': self.address,
@@ -114,7 +116,9 @@ class Wallet:
                     for message in messages
                 ]
 
-    async def get_nft_transfers(self, collection_address: str, start_utime: int) -> list[NftTransfer] | None:
+    async def get_nft_transfers(
+        self, collection_address: str, start_utime: int
+    ) -> list[NftTransfer] | None:
         base_url = (
             'https://testnet.toncenter.com/api/v3'
             if self.is_testnet
@@ -122,7 +126,11 @@ class Wallet:
         )
         url = base_url + '/nft/transfers'
         headers = {
-            'X-Api-Key': config.TONCENTER_API_KEY_TESTNET if self.is_testnet else config.TONCENTER_API_KEY
+            'X-Api-Key': (
+                config.TONCENTER_API_KEY_TESTNET
+                if self.is_testnet
+                else config.TONCENTER_API_KEY
+            )
         }
         params = {
             'owner_address': self.address,

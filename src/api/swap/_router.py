@@ -1,10 +1,10 @@
 from fastapi import APIRouter, status, HTTPException
 
-from ._schemas import FeeResponse, AddSwapRequest
-from src.service.swap import SwapService
 from src.service.admin import AdminService, Const
-from src.service.user import UserService
+from src.service.swap import SwapService
 from src.service.token import TokenService
+from src.service.user import UserService
+from ._schemas import FeeResponse, AddSwapRequest
 
 router = APIRouter()
 
@@ -12,45 +12,34 @@ router = APIRouter()
 @router.get(
     '/',
     responses={
-        status.HTTP_200_OK: {
-            'description': 'Swap is OK'
-        },
-        status.HTTP_503_SERVICE_UNAVAILABLE: {
-            'description': 'Swap is unavailable'
-        }
-    }
+        status.HTTP_200_OK: {'description': 'Swap is OK'},
+        status.HTTP_503_SERVICE_UNAVAILABLE: {'description': 'Swap is unavailable'},
+    },
 )
 async def get_is_swap_available():
     res = await SwapService.is_swap_available()
     if not res:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail='Swap in unavailable'
+            detail='Swap in unavailable',
         )
 
 
 @router.get(
     '/fee',
     responses={
-        status.HTTP_200_OK: {
-            'description': 'Returns swap fee'
-        },
-        status.HTTP_500_INTERNAL_SERVER_ERROR: {
-            'description': 'No swap fee'
-        }
-    }
+        status.HTTP_200_OK: {'description': 'Returns swap fee'},
+        status.HTTP_500_INTERNAL_SERVER_ERROR: {'description': 'No swap fee'},
+    },
 )
 async def get_swap_fee():
     fee = await AdminService.get_constant(Const.FEE_SWAP)
     if not fee:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f'No swap fee'
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f'No swap fee'
         )
 
-    return FeeResponse(
-        fee=fee
-    )
+    return FeeResponse(fee=fee)
 
 
 @router.post(
@@ -59,21 +48,19 @@ async def get_swap_fee():
         status.HTTP_201_CREATED: {
             'description': 'Add user swap and update user balance'
         },
-        status.HTTP_404_NOT_FOUND: {
-            'description': 'Specified user not found'
-        },
+        status.HTTP_404_NOT_FOUND: {'description': 'Specified user not found'},
         status.HTTP_500_INTERNAL_SERVER_ERROR: {
             'description': 'Some server error occurred'
-        }
+        },
     },
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
 )
 async def add_swap(data: AddSwapRequest):
     user_wallet = await UserService.get_user_wallet(data.user_id)
     if not user_wallet:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'User {data.user_id} not found'
+            detail=f'User {data.user_id} not found',
         )
 
     if data.from_token == 'TON':
@@ -85,14 +72,13 @@ async def add_swap(data: AddSwapRequest):
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'Token {data.from_token.upper()} not found'
+            detail=f'Token {data.from_token.upper()} not found',
         )
 
     fee = await AdminService.get_constant(Const.FEE_SWAP)
     if not fee or fee > 100 or fee < 0:
         raise HTTPException(
-            status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Some server error occurred'
+            status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Some server error occurred'
         )
 
     to_amount = data.from_amount * to_token_price
@@ -105,5 +91,5 @@ async def add_swap(data: AddSwapRequest):
         from_amount=data.from_amount,
         to_token=data.to_token,
         to_amount=to_amount - (to_amount * fee / 100),
-        volume=volume
+        volume=volume,
     )
