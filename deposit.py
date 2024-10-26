@@ -16,7 +16,9 @@ async def start_subscription():
         await AccountRepo.update_start_utime()
 
     wallet = Wallet(address=config.TON_WALLET_ADDRESS, is_testnet=config.IS_TESTNET)
-    account = AccountSubscription(wallet=wallet, start_utime=int(start_utime.timestamp()))
+    account = AccountSubscription(
+        wallet=wallet, start_utime=int(start_utime.timestamp())
+    )
 
     await account.check_for_deposit()
     await account.check_for_numbers_transfers()
@@ -27,7 +29,7 @@ async def start_subscription():
 
 async def main():
     await start_subscription()
-    await asyncio.sleep(300)
+    await asyncio.sleep(30)
 
     return await main()
 
