@@ -9,7 +9,7 @@ class DepositTronRequest(BaseModel):
     id: str
     category: str
     coin: str
-    amount: str
+    full_amount: str
     fee: str
     address: str
     status: str

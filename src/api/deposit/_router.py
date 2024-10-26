@@ -21,7 +21,6 @@ router = APIRouter()
     },
 )
 async def add_tron_deposit(user_id: int, data: DepositTronRequest):
-    print(data.coin)
     user = await UserService.get_user_wallet(user_id)
     if not user:
         raise HTTPException(
@@ -31,7 +30,7 @@ async def add_tron_deposit(user_id: int, data: DepositTronRequest):
     if (
         'USDT-TRC20' in data.coin
         and data.status != 'network_error'
-        and data.amount >= 10
+        and float(data.amount) >= 10
     ):
         await UserService.add_deposit(
             user_id=user_id,
