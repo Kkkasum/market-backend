@@ -27,7 +27,7 @@ async def const_callback(callback: types.CallbackQuery, callback_data: ConstCall
 
     if callback_data.c == Const.FEE_WITHDRAWAL_TRON:
         await callback.message.answer(text=format_const(c, extra=' USDT'), reply_markup=com_kb(callback_data.c))
-    elif callback_data.c == Const.FEE_WITHDRAWAL_TON:
+    elif callback_data.c == Const.FEE_WITHDRAWAL_TON or callback_data.c == Const.MAX_INSTANT_SELL:
         await callback.message.answer(text=format_const(c, extra=' TON'), reply_markup=com_kb(callback_data.c))
     else:
         await callback.message.answer(text=format_const(c, extra='%'), reply_markup=com_kb(callback_data.c))
