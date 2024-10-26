@@ -141,7 +141,7 @@ async def withdraw_ton(data: WithdrawTonRequest):
         )
 
     msg_hash = await WithdrawalService.withdraw_ton(
-        data.user_id, data.address, data.amount - fee
+        data.user_id, data.address, data.tag, data.amount - fee
     )
     if isinstance(msg_hash, str):
         await UserService.add_withdrawal(

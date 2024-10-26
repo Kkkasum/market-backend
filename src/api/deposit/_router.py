@@ -28,7 +28,11 @@ async def add_tron_deposit(user_id: int, data: DepositTronRequest):
             status_code=status.HTTP_404_NOT_FOUND, detail=f'User {user_id} not found'
         )
 
-    if 'USDT-TRC20' in data.coin and data.status != 'network_error':
+    if (
+        'USDT-TRC20' in data.coin
+        and data.status != 'network_error'
+        and data.amount >= 10
+    ):
         await UserService.add_deposit(
             user_id=user_id,
             ton_balance=user.ton_balance,

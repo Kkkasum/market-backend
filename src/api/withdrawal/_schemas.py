@@ -22,7 +22,7 @@ class WithdrawUsdtRequest(WithdrawRequest):
 
 
 class WithdrawTonRequest(WithdrawUsdtRequest):
-    pass
+    tag: str | None = None
 
 
 class WithdrawNumberRequest(WithdrawRequest):

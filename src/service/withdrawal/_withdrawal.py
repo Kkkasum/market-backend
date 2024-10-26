@@ -24,7 +24,9 @@ class WithdrawalService:
                 return res['id']
 
     @staticmethod
-    async def withdraw_ton(user_id: int, destination: str, amount: float) -> int | str:
+    async def withdraw_ton(
+        user_id: int, destination: str, tag: str | None, amount: float
+    ) -> int | str:
         client = TonapiClient(api_key=config.TONAPI_KEY, is_testnet=config.IS_TESTNET)
         mnemonics = config.MNEMONICS.split(' ')
 
@@ -42,7 +44,10 @@ class WithdrawalService:
         message_hash = await wallet.transfer(
             destination=destination,
             amount=amount,
-            body=begin_cell().store_uint(0, 32).store_string(str(user_id)).end_cell(),
+            body=begin_cell()
+            .store_uint(0, 32)
+            .store_string(str(tag or user_id))
+            .end_cell(),
         )
 
         return message_hash
