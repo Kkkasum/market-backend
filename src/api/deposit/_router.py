@@ -13,26 +13,21 @@ router = APIRouter()
 @router.post(
     '/tron/{user_id}',
     responses={
-        status.HTTP_200_OK: {
-            'description': 'Add tron deposit'
-        },
-        status.HTTP_404_NOT_FOUND: {
-            'description': 'Specified user not found'
-        },
+        status.HTTP_200_OK: {'description': 'Add tron deposit'},
+        status.HTTP_404_NOT_FOUND: {'description': 'Specified user not found'},
         status.HTTP_500_INTERNAL_SERVER_ERROR: {
             'description': 'Service is unavailable'
-        }
-    }
+        },
+    },
 )
 async def add_tron_deposit(user_id: int, data: DepositTronRequest):
     user = await UserService.get_user_wallet(user_id)
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'User {user_id} not found'
+            status_code=status.HTTP_404_NOT_FOUND, detail=f'User {user_id} not found'
         )
 
-    if 'USDT' in data.coin and data.status == 'confirmed':
+    if 'USDT-TRC20' in data.coin and data.status == 'confirmed':
         await UserService.add_deposit(
             user_id=user_id,
             ton_balance=user.ton_balance,
@@ -55,41 +50,35 @@ async def add_tron_deposit(user_id: int, data: DepositTronRequest):
         status.HTTP_503_SERVICE_UNAVAILABLE: {
             'description': 'Deposit address is unavailable for specified network'
         },
-    }
+    },
 )
 async def get_deposit_address(network: str, user_id: int):
     if network == 'TRON':
         deposit_address = await UserService.get_user_tron_address(user_id)
         if deposit_address:
-            return DepositAddressResponse(
-                deposit_address=deposit_address
-            )
+            return DepositAddressResponse(deposit_address=deposit_address)
 
         deposit_address = await DepositService.get_deposit_tron_address(user_id)
         if not deposit_address:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail=f'Deposit address is unavailable for network {network}'
+                detail=f'Deposit address is unavailable for network {network}',
             )
 
         await UserService.add_user_tron_address(user_id, deposit_address)
 
-        return DepositAddressResponse(
-            deposit_address=deposit_address
-        )
+        return DepositAddressResponse(deposit_address=deposit_address)
 
     if network == 'TON':
         deposit_address = await DepositService.get_deposit_ton_address()
         if not deposit_address:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail=f'Deposit address is unavailable for network {network}'
+                detail=f'Deposit address is unavailable for network {network}',
             )
-        return DepositAddressResponse(
-            deposit_address=deposit_address
-        )
+        return DepositAddressResponse(deposit_address=deposit_address)
 
     raise HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST,
-        detail=f'No deposit address for network {network}'
+        detail=f'No deposit address for network {network}',
     )
