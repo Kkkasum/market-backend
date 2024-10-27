@@ -8,49 +8,28 @@ class UserRepo:
     @staticmethod
     async def add_user(user_id: int) -> None:
         async with new_session() as session:
-            stmt = (
-                insert(User)
-                .values(id=user_id)
-            )
+            stmt = insert(User).values(id=user_id)
             await session.execute(stmt)
             await session.commit()
 
     @staticmethod
     async def add_user_number(user_id: int, number_id: int) -> None:
         async with new_session() as session:
-            stmt = (
-                insert(UserNumber)
-                .values(
-                    user_id=user_id,
-                    number_id=number_id
-                )
-            )
+            stmt = insert(UserNumber).values(user_id=user_id, number_id=number_id)
             await session.execute(stmt)
             await session.commit()
 
     @staticmethod
     async def add_user_username(user_id: int, username_id: int) -> None:
         async with new_session() as session:
-            stmt = (
-                insert(UserNumber)
-                .values(
-                    user_id=user_id,
-                    number_id=username_id
-                )
-            )
+            stmt = insert(UserUsername).values(user_id=user_id, username_id=username_id)
             await session.execute(stmt)
             await session.commit()
 
     @staticmethod
     async def add_user_tron_address(user_id: int, address: str) -> None:
         async with new_session() as session:
-            stmt = (
-                insert(UserAddress)
-                .values(
-                    user_id=user_id,
-                    address=address
-                )
-            )
+            stmt = insert(UserAddress).values(user_id=user_id, address=address)
             await session.execute(stmt)
             await session.commit()
 
@@ -61,8 +40,7 @@ class UserRepo:
                 select(User)
                 .where(User.id == user_id)
                 .options(
-                    selectinload(User.users_numbers),
-                    selectinload(User.users_usernames)
+                    selectinload(User.users_numbers), selectinload(User.users_usernames)
                 )
             )
             res = (await session.execute(query)).scalar_one_or_none()
@@ -80,10 +58,7 @@ class UserRepo:
     @staticmethod
     async def get_user_wallet(user_id: int) -> User | None:
         async with new_session() as session:
-            query = (
-                select(User)
-                .where(User.id == user_id)
-            )
+            query = select(User).where(User.id == user_id)
             res = (await session.execute(query)).scalar_one_or_none()
 
             return res
@@ -115,12 +90,8 @@ class UserRepo:
     @staticmethod
     async def get_user_number(user_id: int, number_id: int) -> UserNumber | None:
         async with new_session() as session:
-            query = (
-                select(UserNumber)
-                .where(
-                    UserNumber.user_id == user_id,
-                    UserNumber.number_id == number_id
-                )
+            query = select(UserNumber).where(
+                UserNumber.user_id == user_id, UserNumber.number_id == number_id
             )
             res = (await session.execute(query)).scalar_one_or_none()
 
@@ -129,12 +100,8 @@ class UserRepo:
     @staticmethod
     async def get_user_username(user_id: int, username_id: int) -> UserUsername | None:
         async with new_session() as session:
-            query = (
-                select(UserUsername)
-                .where(
-                    UserUsername.user_id == user_id,
-                    UserUsername.username_id == username_id
-                )
+            query = select(UserUsername).where(
+                UserUsername.user_id == user_id, UserUsername.username_id == username_id
             )
             res = (await session.execute(query)).scalar_one_or_none()
 
@@ -143,24 +110,20 @@ class UserRepo:
     @staticmethod
     async def get_user_tron_address(user_id: int) -> str | None:
         async with new_session() as session:
-            query = (
-                select(UserAddress.address)
-                .where(UserAddress.user_id == user_id)
-            )
+            query = select(UserAddress.address).where(UserAddress.user_id == user_id)
             res = (await session.execute(query)).scalar_one_or_none()
 
             return res
 
     @staticmethod
-    async def update_user_balance(user_id: int, ton_balance: float, usdt_balance: float) -> None:
+    async def update_user_balance(
+        user_id: int, ton_balance: float, usdt_balance: float
+    ) -> None:
         async with new_session() as session:
             stmt = (
                 update(User)
                 .where(User.id == user_id)
-                .values(
-                    ton_balance=ton_balance,
-                    usdt_balance=usdt_balance
-                )
+                .values(ton_balance=ton_balance, usdt_balance=usdt_balance)
             )
             await session.execute(stmt)
             await session.commit()
@@ -197,9 +160,7 @@ class UserRepo:
             stmt = (
                 update(UserNumber)
                 .where(UserNumber.number_id == number_id)
-                .values(
-                    user_id=user_id
-                )
+                .values(user_id=user_id)
                 .returning(UserNumber.id)
             )
             res = (await session.execute(stmt)).scalar()
@@ -213,9 +174,7 @@ class UserRepo:
             stmt = (
                 update(UserUsername)
                 .where(UserUsername.username_id == username_id)
-                .values(
-                    user_id=user_id
-                )
+                .values(user_id=user_id)
                 .returning(UserUsername.id)
             )
             res = (await session.execute(stmt)).scalar()

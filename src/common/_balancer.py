@@ -1,4 +1,4 @@
-from pytoniq import LiteBalancer
+from pytoniq import LiteClient
 
-MAINNET = LiteBalancer.from_mainnet_config(trust_level=1)
-TESTNET = LiteBalancer.from_testnet_config(trust_level=1)
+MAINNET = LiteClient.from_mainnet_config(trust_level=2)
+TESTNET = LiteClient.from_testnet_config(trust_level=2)

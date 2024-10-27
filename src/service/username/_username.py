@@ -1,8 +1,8 @@
 from pytoniq_core import Address, Slice, Cell
 
-from ._models import Status, UsernameWithOwner, MarketUsername
 from src.common import MAINNET_BALANCER, USERNAMES_COLLECTION_ADDRESS
 from src.repo.username import UsernameRepo
+from ._models import Status, UsernameWithOwner, MarketUsername
 
 
 class UsernameService:
@@ -29,7 +29,7 @@ class UsernameService:
                 status=Status.MARKET,
                 owner_id=owner_id,
                 price=username.users_usernames.market_username.price,
-                created_at=username.users_usernames.market_username.created_at
+                created_at=username.users_usernames.market_username.created_at,
             )
         else:
             return UsernameWithOwner(
@@ -39,16 +39,18 @@ class UsernameService:
                 status=Status.WALLET,
                 owner_id=owner_id,
             )
-    
+
     @staticmethod
     async def get_username_by_address(address: Address) -> int | None:
         async with MAINNET_BALANCER as provider:
-            username_nft_data: tuple[
-                int, int, Slice, Slice, Cell
-            ] = await provider.run_get_method(address=address, method='get_nft_data', stack=[])
+            username_nft_data: tuple[int, int, Slice, Slice, Cell] = (
+                await provider.run_get_method(
+                    address=address, method='get_nft_data', stack=[]
+                )
+            )
 
             collection_address: Address = username_nft_data[2].load_address()
-            if collection_address != USERNAMES_COLLECTION_ADDRESS:
+            if collection_address != Address(USERNAMES_COLLECTION_ADDRESS):
                 return
 
             username = (

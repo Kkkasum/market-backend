@@ -1,5 +1,7 @@
 from fastapi import APIRouter, status, HTTPException
 
+from loguru import logger
+
 from src.service.deposit import DepositService
 from src.service.user import UserService
 from ._schemas import (
@@ -40,6 +42,8 @@ async def add_tron_deposit(user_id: int, data: DepositTronRequest):
             amount=float(data.amount),
             tx_hash=data.tx_id,
         )
+
+    logger.success(f'Add {data.amount} as deposit for user {user_id}')
 
 
 @router.get(

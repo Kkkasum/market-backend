@@ -1,5 +1,5 @@
 from src.common import config, r
-from src.service.wallet import Wallet
+from src.service.user import UserService
 
 
 class SwapService:
@@ -9,15 +9,13 @@ class SwapService:
         if res and int(res):
             return 1
 
-        wallet = Wallet(address=config.TON_WALLET_ADDRESS, is_testnet=config.IS_TESTNET)
+        user = await UserService.get_user_wallet(user_id=config.ADMIN_ID)
 
-        balance = await wallet.get_balance()
-        if not balance:
+        if not user.ton_balance:
             await r.setex(name='is_swap_available', value=0, time=10)
             return
 
-        tron_balance = await Wallet.get_tron_balance()
-        if not tron_balance:
+        if not user.usdt_balance:
             await r.setex(name='is_swap_available', value=0, time=10)
             return
 

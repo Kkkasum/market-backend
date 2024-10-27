@@ -1,11 +1,15 @@
 from pytoniq_core import Cell, Address, AddressError
 
-from src.common import MIN_TON_DEPOSIT, NUMBERS_COLLECTION_ADDRESS, USERNAMES_COLLECTION_ADDRESS
-from src.service.wallet import Wallet, Message, NftTransfer
+from src.common import (
+    MIN_TON_DEPOSIT,
+    NUMBERS_COLLECTION_ADDRESS,
+    USERNAMES_COLLECTION_ADDRESS,
+)
 from src.service.history import HistoryService
-from src.service.user import UserService
 from src.service.number import NumberService
+from src.service.user import UserService
 from src.service.username import UsernameService
+from src.service.wallet import Wallet, Message, NftTransfer
 
 
 class AccountSubscription:
@@ -19,7 +23,7 @@ class AccountSubscription:
             # external message
             return
 
-        if not msg.value or float(msg.value) / 10 ** 9 < MIN_TON_DEPOSIT:
+        if not msg.value or float(msg.value) / 10**9 < MIN_TON_DEPOSIT:
             # check msg value
             return
 
@@ -28,13 +32,19 @@ class AccountSubscription:
             # tx is already checked
             return
 
-        if not msg.message_content or not msg.message_content.decoded or not msg.message_content.decoded.comment:
+        if (
+            not msg.message_content
+            or not msg.message_content.decoded
+            or not msg.message_content.decoded.comment
+        ):
             return
 
         return True
 
     @staticmethod
-    async def validate_nft_transfer(nft_transfer: NftTransfer, is_number: bool = False) -> tuple[int, str, str] | None:
+    async def validate_nft_transfer(
+        nft_transfer: NftTransfer, is_number: bool = False
+    ) -> tuple[int, str, str] | None:
         try:
             nft_address = Address(nft_transfer.nft_address)
         except AddressError:
@@ -48,8 +58,14 @@ class AccountSubscription:
         if not asset:
             return
 
-        comment = Cell.one_from_boc(nft_transfer.forward_payload).begin_parse().skip_bits(32)
-        user_id = comment.load_string()
+        comment = (
+            Cell.one_from_boc(nft_transfer.forward_payload).begin_parse().skip_bits(32)
+        )
+
+        try:
+            user_id = int(comment.load_string())
+        except ValueError:
+            return
 
         return user_id, asset, nft_address.to_str()
 
@@ -62,7 +78,9 @@ class AccountSubscription:
             res = await self.validate_deposit_message(message)
             if res:
                 tx_hash, user_id, ton_deposit = (
-                    message.hash, int(message.message_content.decoded.comment), float(message.value) / 10 ** 9
+                    message.hash,
+                    int(message.message_content.decoded.comment),
+                    float(message.value) / 10**9,
                 )
 
                 user = await UserService.get_user(user_id)
@@ -79,16 +97,20 @@ class AccountSubscription:
                 )
 
     async def check_for_numbers_transfers(self) -> None:
-        transfers = await self.wallet.get_nft_transfers(NUMBERS_COLLECTION_ADDRESS, self.start_utime)
+        transfers = await self.wallet.get_nft_transfers(
+            NUMBERS_COLLECTION_ADDRESS, self.start_utime
+        )
         if not transfers:
             return
 
         for transfer in transfers:
-            nft_transfer_data = await self.validate_nft_transfer(transfer, is_number=True)
+            nft_transfer_data = await self.validate_nft_transfer(
+                transfer, is_number=True
+            )
             if nft_transfer_data:
                 user_id, number, address = nft_transfer_data
 
-                user = await UserService.get_user(user_id)
+                user = await UserService.get_user_wallet(user_id)
                 if not user:
                     return
 
@@ -96,7 +118,9 @@ class AccountSubscription:
                 await UserService.add_user_number(user_id, number_id)
 
     async def check_for_usernames_transfers(self) -> None:
-        transfers = await self.wallet.get_nft_transfers(USERNAMES_COLLECTION_ADDRESS, self.start_utime)
+        transfers = await self.wallet.get_nft_transfers(
+            USERNAMES_COLLECTION_ADDRESS, self.start_utime
+        )
         if not transfers:
             return
 
@@ -105,7 +129,7 @@ class AccountSubscription:
             if nft_transfer_data:
                 user_id, username, address = nft_transfer_data
 
-                user = await UserService.get_user(user_id)
+                user = await UserService.get_user_wallet(user_id)
                 if not user:
                     return
 

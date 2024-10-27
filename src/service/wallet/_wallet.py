@@ -135,6 +135,7 @@ class Wallet:
         params = {
             'owner_address': self.address,
             'collection_address': collection_address,
+            'direction': 'in',
             'start_utime': start_utime,
         }
 
@@ -150,9 +151,6 @@ class Wallet:
                     return
 
                 if not len(nft_transfers):
-                    return
-
-                if int(nft_transfers[-1]['created_at']) < start_utime:
                     return
 
                 return [

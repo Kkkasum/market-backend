@@ -1,5 +1,6 @@
 from fastapi import APIRouter, status, HTTPException
 
+from src.common import config
 from src.service.admin import AdminService, Const
 from src.service.swap import SwapService
 from src.service.token import TokenService
@@ -82,6 +83,16 @@ async def add_swap(data: AddSwapRequest):
         )
 
     to_amount = data.from_amount * to_token_price
+
+    admin_wallet = await UserService.get_user_wallet(user_id=config.ADMIN_ID)
+    if data.from_token == 'TON' and admin_wallet.usdt_balance < to_amount:
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Some server error occurred'
+        )
+    elif data.from_token == 'USDT' and admin_wallet.ton_balance < to_amount:
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Some server error occurred'
+        )
 
     await UserService.add_user_swap(
         user_id=data.user_id,

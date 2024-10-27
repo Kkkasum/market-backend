@@ -6,7 +6,6 @@ from src.service.market import MarketService
 from src.service.number import NumberService, Status as NumberStatus
 from src.service.user import UserService
 from src.service.username import UsernameService, Status as UsernameStatus
-from src.service.wallet import Wallet
 from ._schemas import (
     MarketNumbersResponse,
     MarketUsernamesResponse,
@@ -337,18 +336,10 @@ async def instant_sell_number(data: InstantSellNumberRequest):
             detail='Some server error occurred',
         )
 
-    wallet = Wallet(address=config.TON_WALLET_ADDRESS, is_testnet=config.IS_TESTNET)
-    balance = await wallet.get_balance()
-    if not balance:
+    admin_wallet = await UserService.get_user_wallet(user_id=config.ADMIN_ID)
+    if admin_wallet.ton_balance < instant_sell_price:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Some server error occurred',
-        )
-
-    if balance < instant_sell_price:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Some server error occurred',
+            status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Some server error occurred'
         )
 
     await UserService.update_number_owner(user_id=config.ADMIN_ID, number_id=number.id)

@@ -10,13 +10,10 @@ class NumberRepo:
         async with new_session() as session:
             stmt = (
                 insert(Number)
-                .values(
-                    number=number,
-                    address=address
-                )
+                .values(number=number, address=address)
                 .returning(Number.id)
             )
-            res = await session.execute(stmt)
+            res = (await session.execute(stmt)).scalar()
             await session.commit()
 
             return res
@@ -36,10 +33,7 @@ class NumberRepo:
     @staticmethod
     async def get_address_by_number(number: str) -> str | None:
         async with new_session() as session:
-            query = (
-                select(Number.address)
-                .where(Number.number == number)
-            )
+            query = select(Number.address).where(Number.number == number)
             res = (await session.execute(query)).scalar_one_or_none()
 
             return res
@@ -47,9 +41,6 @@ class NumberRepo:
     @staticmethod
     async def delete_number(number: str) -> None:
         async with new_session() as session:
-            stmt = (
-                delete(Number)
-                .where(Number.number == number)
-            )
+            stmt = delete(Number).where(Number.number == number)
             await session.execute(stmt)
             await session.commit()

@@ -10,13 +10,10 @@ class UsernameRepo:
         async with new_session() as session:
             stmt = (
                 insert(Username)
-                .values(
-                    username=username,
-                    address=address
-                )
+                .values(username=username, address=address)
                 .returning(Username.id)
             )
-            res = await session.execute(stmt)
+            res = (await session.execute(stmt)).scalar()
             await session.commit()
 
             return res
@@ -36,10 +33,7 @@ class UsernameRepo:
     @staticmethod
     async def get_address_by_username(username: str) -> str | None:
         async with new_session() as session:
-            query = (
-                select(Username.address)
-                .where(Username.username == username)
-            )
+            query = select(Username.address).where(Username.username == username)
             res = (await session.execute(query)).scalar_one_or_none()
 
             return res
@@ -47,9 +41,6 @@ class UsernameRepo:
     @staticmethod
     async def delete_number(username: str) -> None:
         async with new_session() as session:
-            stmt = (
-                delete(Username)
-                .where(Username.username == username)
-            )
+            stmt = delete(Username).where(Username.username == username)
             await session.execute(stmt)
             await session.commit()

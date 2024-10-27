@@ -23,7 +23,6 @@ async def start_subscription():
     await account.check_for_deposit()
     await account.check_for_numbers_transfers()
     await account.check_for_usernames_transfers()
-
     print('Complete checking')
 
 
