@@ -1,6 +1,8 @@
-from pytoniq_core import Address, Slice, Cell
+from pytoniq_core import Address, Cell
+from tonutils.client import ToncenterClient
+from tonutils.nft import NFT
 
-from src.common import MAINNET_BALANCER, USERNAMES_COLLECTION_ADDRESS
+from src.common import config, USERNAMES_COLLECTION_ADDRESS
 from src.repo.username import UsernameRepo
 from ._models import Status, UsernameWithOwner, MarketUsername
 
@@ -42,24 +44,33 @@ class UsernameService:
 
     @staticmethod
     async def get_username_by_address(address: Address) -> int | None:
-        async with MAINNET_BALANCER as provider:
-            username_nft_data: tuple[int, int, Slice, Slice, Cell] = (
-                await provider.run_get_method(
-                    address=address, method='get_nft_data', stack=[]
-                )
+        client = ToncenterClient(
+            api_key=(
+                config.TONCENTER_API_KEY
+                if not config.IS_TESTNET
+                else config.TONCENTER_API_KEY_TESTNET
             )
+        )
 
-            collection_address: Address = username_nft_data[2].load_address()
-            if collection_address != Address(USERNAMES_COLLECTION_ADDRESS):
-                return
+        nft = await NFT.get_nft_data(client=client, nft_address=address)
+        if nft.collection_address != Address(USERNAMES_COLLECTION_ADDRESS):
+            return
 
-            username = (
-                await provider.run_get_method(
-                    address=address, method='get_telemint_token_name', stack=[]
-                )
-            )[0].load_string()
+        username = (
+            Cell.one_from_boc(
+                (
+                    await client.run_get_method(
+                        address=address.to_str(),
+                        method_name='get_telemint_token_name',
+                        stack=[],
+                    )
+                )['stack'][0]['value']
+            )
+            .begin_parse()
+            .load_string()
+        )
 
-            return username
+        return username
 
     @staticmethod
     async def get_address_by_username(username: str) -> str | None:

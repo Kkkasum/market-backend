@@ -87,6 +87,10 @@ class AccountSubscription:
                 if not user:
                     continue
 
+                deposit = await HistoryService.get_deposit_by_tx_hash(tx_hash)
+                if deposit:
+                    return
+
                 await UserService.add_deposit(
                     user_id=user_id,
                     ton_balance=user.ton_balance,

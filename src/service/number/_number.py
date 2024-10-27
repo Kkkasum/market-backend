@@ -1,6 +1,8 @@
-from pytoniq_core import Slice, Cell, Address
+from pytoniq_core import Address, Cell
+from tonutils.client import ToncenterClient
+from tonutils.nft import NFT
 
-from src.common import MAINNET_BALANCER, NUMBERS_COLLECTION_ADDRESS
+from src.common import config, NUMBERS_COLLECTION_ADDRESS
 from src.repo.number import NumberRepo
 from ._models import Status, NumberWithOwner, MarketNumber
 
@@ -42,24 +44,33 @@ class NumberService:
 
     @staticmethod
     async def get_number_by_address(address: Address) -> str | None:
-        async with MAINNET_BALANCER as provider:
-            number_nft_data: tuple[int, int, Slice, Slice, Cell] = (
-                await provider.run_get_method(
-                    address=address, method='get_nft_data', stack=[]
-                )
+        client = ToncenterClient(
+            api_key=(
+                config.TONCENTER_API_KEY
+                if not config.IS_TESTNET
+                else config.TONCENTER_API_KEY_TESTNET
             )
+        )
 
-            collection_address: Address = number_nft_data[2].load_address()
-            if collection_address != Address(NUMBERS_COLLECTION_ADDRESS):
-                return
+        nft = await NFT.get_nft_data(client=client, nft_address=address)
+        if nft.collection_address != Address(NUMBERS_COLLECTION_ADDRESS):
+            return
 
-            number = (
-                await provider.run_get_method(
-                    address=address, method='get_telemint_token_name', stack=[]
-                )
-            )[0].load_string()
+        number = (
+            Cell.one_from_boc(
+                (
+                    await client.run_get_method(
+                        address=address.to_str(),
+                        method_name='get_telemint_token_name',
+                        stack=[],
+                    )
+                )['stack'][0]['value']
+            )
+            .begin_parse()
+            .load_string()
+        )
 
-            return number
+        return number
 
     @staticmethod
     async def get_address_by_number(number: str) -> str | None:

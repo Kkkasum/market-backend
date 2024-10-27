@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from ._models import DepositTx, WithdrawalTx, SwapTx
 from src.repo.history import HistoryRepo
+from ._models import DepositTx, WithdrawalTx, SwapTx
 
 
 class HistoryService:
@@ -41,26 +41,33 @@ class HistoryService:
         if not swaps:
             return
 
-        return [
-            SwapTx.model_validate(swap, from_attributes=True)
-            for swap in swaps
-        ]
+        return [SwapTx.model_validate(swap, from_attributes=True) for swap in swaps]
 
     @staticmethod
-    async def get_stats(start_time: datetime | None = None, end_time: datetime | None = None) -> tuple[int, int, int]:
+    async def get_stats(
+        start_time: datetime | None = None, end_time: datetime | None = None
+    ) -> tuple[int, int, int]:
         return (
             await HistoryRepo.count_withdrawals(start_time, end_time),
             await HistoryRepo.count_deposits(start_time, end_time),
-            await HistoryRepo.count_swaps(start_time, end_time)
+            await HistoryRepo.count_swaps(start_time, end_time),
         )
 
     @staticmethod
-    async def add_withdrawal(user_id: int, token: str, amount: float, address: str, tx_hash: str) -> None:
+    async def add_withdrawal(
+        user_id: int, token: str, amount: float, address: str, tx_hash: str
+    ) -> None:
         await HistoryRepo.add_withdrawal(user_id, token, amount, address, tx_hash)
 
     @staticmethod
-    async def add_deposit(user_id: int, token: str, amount: float, tx_hash: str) -> None:
-        await HistoryRepo.add_deposit(user_id, token, amount, tx_hash)
+    async def add_deposit(
+        user_id: int,
+        token: str,
+        amount: float,
+        tx_hash: str,
+        created_at: int | None = None,
+    ) -> None:
+        await HistoryRepo.add_deposit(user_id, token, amount, tx_hash, created_at)
 
     @staticmethod
     async def add_swap(
@@ -69,6 +76,8 @@ class HistoryService:
         from_amount: float,
         to_token: str,
         to_amount: float,
-        volume: float
+        volume: float,
     ) -> None:
-        await HistoryRepo.add_swap(user_id, from_token, from_amount, to_token, to_amount, volume)
+        await HistoryRepo.add_swap(
+            user_id, from_token, from_amount, to_token, to_amount, volume
+        )

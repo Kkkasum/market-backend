@@ -1,7 +1,15 @@
-from ._models import NumberStatus, UsernameStatus, User, UserWallet, Number, Username, UserHistory
 from src.repo.user import UserRepo
-from src.service.token import TokenService
 from src.service.history import HistoryService
+from src.service.token import TokenService
+from ._models import (
+    NumberStatus,
+    UsernameStatus,
+    User,
+    UserWallet,
+    Number,
+    Username,
+    UserHistory,
+)
 
 
 class UserService:
@@ -16,14 +24,19 @@ class UserService:
         usdt_balance: float,
         token: str,
         amount: float,
-        tx_hash: str
+        tx_hash: str,
+        created_at: int | None = None,
     ) -> None:
-        await HistoryService.add_deposit(user_id, token, amount, tx_hash)
+        await HistoryService.add_deposit(user_id, token, amount, tx_hash, created_at)
 
         if token == 'TON':
-            await UserRepo.update_user_balance(user_id, ton_balance + amount, usdt_balance)
+            await UserRepo.update_user_balance(
+                user_id, ton_balance + amount, usdt_balance
+            )
         else:
-            await UserRepo.update_user_balance(user_id, ton_balance, usdt_balance + amount)
+            await UserRepo.update_user_balance(
+                user_id, ton_balance, usdt_balance + amount
+            )
 
     @staticmethod
     async def add_withdrawal(
@@ -33,7 +46,7 @@ class UserService:
         token: str,
         amount: float,
         address: str,
-        tx_hash: str
+        tx_hash: str,
     ) -> None:
         await HistoryService.add_withdrawal(user_id, token, amount, address, tx_hash)
 
@@ -53,12 +66,18 @@ class UserService:
         to_amount: float,
         volume: float,
     ) -> None:
-        await HistoryService.add_swap(user_id, from_token, from_amount, to_token, to_amount, volume)
+        await HistoryService.add_swap(
+            user_id, from_token, from_amount, to_token, to_amount, volume
+        )
 
         if from_token == 'TON' and to_token == 'USDT':
-            await UserRepo.update_user_balance(user_id, ton_balance - from_amount, usdt_balance + to_amount)
+            await UserRepo.update_user_balance(
+                user_id, ton_balance - from_amount, usdt_balance + to_amount
+            )
         elif from_token == 'USDT' and to_token == 'TON':
-            await UserRepo.update_user_balance(user_id, ton_balance + to_amount, usdt_balance - from_amount)
+            await UserRepo.update_user_balance(
+                user_id, ton_balance + to_amount, usdt_balance - from_amount
+            )
 
     @staticmethod
     async def add_user_number(user_id: int, number_id: int) -> None:
@@ -90,7 +109,9 @@ class UserService:
                     id=n.number.id,
                     number=n.number.number,
                     address=n.number.address,
-                    status=NumberStatus.MARKET if n.market_number else NumberStatus.WALLET
+                    status=(
+                        NumberStatus.MARKET if n.market_number else NumberStatus.WALLET
+                    ),
                 )
                 for n in user.users_numbers
             ],
@@ -99,7 +120,11 @@ class UserService:
                     id=n.username.id,
                     username=n.username.username,
                     address=n.username.address,
-                    status=UsernameStatus.MARKET if n.market_username else UsernameStatus.WALLET
+                    status=(
+                        UsernameStatus.MARKET
+                        if n.market_username
+                        else UsernameStatus.WALLET
+                    ),
                 )
                 for n in user.users_usernames
             ],
@@ -135,7 +160,11 @@ class UserService:
                 id=user_number.number.id,
                 number=user_number.number.number,
                 address=user_number.number.address,
-                status=NumberStatus.MARKET if user_number.market_number else NumberStatus.WALLET
+                status=(
+                    NumberStatus.MARKET
+                    if user_number.market_number
+                    else NumberStatus.WALLET
+                ),
             )
             for user_number in user_numbers
         ]
@@ -151,7 +180,11 @@ class UserService:
                 id=user_username.username.id,
                 username=user_username.username.username,
                 address=user_username.username.address,
-                status=UsernameStatus.MARKET if user_username.market_username else UsernameStatus.WALLET
+                status=(
+                    UsernameStatus.MARKET
+                    if user_username.market_username
+                    else UsernameStatus.WALLET
+                ),
             )
             for user_username in user_usernames
         ]

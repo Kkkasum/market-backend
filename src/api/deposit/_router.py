@@ -4,6 +4,7 @@ from loguru import logger
 
 from src.service.deposit import DepositService
 from src.service.user import UserService
+from src.service.history import HistoryService
 from ._schemas import (
     DepositAddressResponse,
     DepositTronRequest,
@@ -28,6 +29,10 @@ async def add_tron_deposit(user_id: int, data: DepositTronRequest):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f'User {user_id} not found'
         )
+
+    tx = await HistoryService.get_deposit_by_tx_hash(tx_hash=data.tx_id)
+    if tx:
+        return
 
     if (
         'USDT-TRC20' in data.coin
