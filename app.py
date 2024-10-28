@@ -7,7 +7,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from src.api import router as api_router
-from src.common import config
 
 
 @asynccontextmanager
@@ -21,7 +20,7 @@ app = FastAPI(title='Market API', lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[config.ORIGIN_URL],
+    allow_origins=['*'],
     allow_credentials=True,
     allow_methods=['GET', 'POST', 'PUT', 'OPTIONS'],
     allow_headers=['*'],
