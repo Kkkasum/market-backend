@@ -1,5 +1,7 @@
 from pytoniq_core import Cell, Address, AddressError
 
+from sqlalchemy.exc import IntegrityError
+
 from src.common import (
     MIN_TON_DEPOSIT,
     NUMBERS_COLLECTION_ADDRESS,
@@ -118,6 +120,10 @@ class AccountSubscription:
                 if not user:
                     return
 
+                dep = await HistoryService.get_nft_deposit_by_tx_hash(tx_hash)
+                if dep:
+                    return
+
                 number_id = await NumberService.add_number(number, address)
                 await UserService.add_user_number(
                     user_id, number_id, number, address, tx_hash
@@ -139,7 +145,10 @@ class AccountSubscription:
                 if not user:
                     return
 
+                dep = await HistoryService.get_nft_deposit_by_tx_hash(tx_hash)
+                if dep:
+                    return
+
                 username_id = await UsernameService.add_username(username, address)
                 await UserService.add_user_username(
                     user_id, username_id, username, address, tx_hash
-                )

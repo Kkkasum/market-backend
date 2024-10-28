@@ -32,6 +32,14 @@ class HistoryService:
         return DepositTx.model_validate(deposit, from_attributes=True)
 
     @staticmethod
+    async def get_nft_deposit_by_tx_hash(tx_hash: str) -> NftDepositTx | None:
+        deposit = await HistoryRepo.get_nft_deposit_by_tx_hash(tx_hash)
+        if not deposit:
+            return
+
+        return NftDepositTx.model_validate(deposit, from_attributes=True)
+
+    @staticmethod
     async def get_withdrawals(user_id: int) -> list[WithdrawalTx] | None:
         withdrawals = await HistoryRepo.get_withdrawals(user_id)
         if not withdrawals:

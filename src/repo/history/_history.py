@@ -31,6 +31,14 @@ class HistoryRepo:
             return res
 
     @staticmethod
+    async def get_nft_deposit_by_tx_hash(tx_hash: str) -> UserNftDeposit | None:
+        async with new_session() as session:
+            query = select(UserNftDeposit).where(UserNftDeposit.tx_hash == tx_hash)
+            res = (await session.execute(query)).scalar_one_or_none()
+
+            return res
+
+    @staticmethod
     async def get_withdrawals(user_id: int) -> list[UserWithdrawal]:
         async with new_session() as session:
             query = select(UserWithdrawal).where(UserWithdrawal.user_id == user_id)
