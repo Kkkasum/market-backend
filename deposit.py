@@ -1,6 +1,6 @@
 import asyncio
-from time import time
 from datetime import datetime
+from time import time
 
 from src.common import config
 from src.repo.account import AccountRepo
@@ -26,7 +26,8 @@ async def start_subscription():
         await account.check_for_numbers_transfers()
         await account.check_for_usernames_transfers()
         print('Complete checking')
-    except Exception:
+    except Exception as e:
+        print(e)
         return
     else:
         await AccountRepo.update_start_utime(new_start_time)

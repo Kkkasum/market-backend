@@ -44,7 +44,7 @@ class AccountSubscription:
     @staticmethod
     async def validate_nft_transfer(
         nft_transfer: NftTransfer, is_number: bool = False
-    ) -> tuple[int, str, str] | None:
+    ) -> tuple[int, str, str, str] | None:
         try:
             nft_address = Address(nft_transfer.nft_address)
         except AddressError:
@@ -67,7 +67,7 @@ class AccountSubscription:
         except ValueError:
             return
 
-        return user_id, asset, nft_address.to_str()
+        return user_id, asset, nft_address.to_str(), nft_transfer.transaction_hash
 
     async def check_for_deposit(self) -> None:
         messages = await self.wallet.get_messages(self.start_utime)
@@ -112,14 +112,16 @@ class AccountSubscription:
                 transfer, is_number=True
             )
             if nft_transfer_data:
-                user_id, number, address = nft_transfer_data
+                user_id, number, address, tx_hash = nft_transfer_data
 
                 user = await UserService.get_user_wallet(user_id)
                 if not user:
                     return
 
                 number_id = await NumberService.add_number(number, address)
-                await UserService.add_user_number(user_id, number_id)
+                await UserService.add_user_number(
+                    user_id, number_id, number, address, tx_hash
+                )
 
     async def check_for_usernames_transfers(self) -> None:
         transfers = await self.wallet.get_nft_transfers(
@@ -131,11 +133,13 @@ class AccountSubscription:
         for transfer in transfers:
             nft_transfer_data = await self.validate_nft_transfer(transfer)
             if nft_transfer_data:
-                user_id, username, address = nft_transfer_data
+                user_id, username, address, tx_hash = nft_transfer_data
 
                 user = await UserService.get_user_wallet(user_id)
                 if not user:
                     return
 
                 username_id = await UsernameService.add_username(username, address)
-                await UserService.add_user_username(user_id, username_id)
+                await UserService.add_user_username(
+                    user_id, username_id, username, address, tx_hash
+                )
