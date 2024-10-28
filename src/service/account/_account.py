@@ -1,7 +1,5 @@
 from pytoniq_core import Cell, Address, AddressError
 
-from sqlalchemy.exc import IntegrityError
-
 from src.common import (
     MIN_TON_DEPOSIT,
     NUMBERS_COLLECTION_ADDRESS,
@@ -152,3 +150,4 @@ class AccountSubscription:
                 username_id = await UsernameService.add_username(username, address)
                 await UserService.add_user_username(
                     user_id, username_id, username, address, tx_hash
+                )
