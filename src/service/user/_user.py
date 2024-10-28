@@ -1,9 +1,9 @@
 from src.repo.user import UserRepo
 from src.service.history import HistoryService
+from src.service.number import Status as NumberStatus
 from src.service.token import TokenService
+from src.service.username import Status as UsernameStatus
 from ._models import (
-    NumberStatus,
-    UsernameStatus,
     User,
     UserWallet,
     Number,
@@ -80,12 +80,44 @@ class UserService:
             )
 
     @staticmethod
-    async def add_user_number(user_id: int, number_id: int) -> None:
+    async def add_user_number(
+        user_id: int, number_id: int, nft_name: str, nft_address: str, tx_hash: str
+    ) -> None:
+        await HistoryService.add_nft_deposit(user_id, nft_name, nft_address, tx_hash)
+
         await UserRepo.add_user_number(user_id, number_id)
 
     @staticmethod
-    async def add_user_username(user_id: int, username_id: int) -> None:
+    async def add_user_username(
+        user_id: int, username_id: int, nft_name: str, nft_address: str, tx_hash: str
+    ) -> None:
+        await HistoryService.add_nft_deposit(user_id, nft_name, nft_address, tx_hash)
+
         await UserRepo.add_user_username(user_id, username_id)
+
+    @staticmethod
+    async def add_market_orders(
+        seller_user_id: int,
+        buyer_user_id: int,
+        nft_name: str,
+        nft_address: str,
+        price: float,
+    ) -> None:
+        await HistoryService.add_market_order(
+            user_id=seller_user_id,
+            action='SELL',
+            nft_name=nft_name,
+            nft_address=nft_address,
+            price=price,
+        )
+
+        await HistoryService.add_market_order(
+            user_id=buyer_user_id,
+            action='BUY',
+            nft_name=nft_name,
+            nft_address=nft_address,
+            price=price,
+        )
 
     @staticmethod
     async def add_user_tron_address(user_id: int, address: str) -> None:
@@ -194,11 +226,17 @@ class UserService:
         deposits = await HistoryService.get_deposits(user_id)
         withdrawals = await HistoryService.get_withdrawals(user_id)
         swaps = await HistoryService.get_swaps(user_id)
+        nft_deposits = await HistoryService.get_nft_deposits(user_id)
+        nft_withdrawals = await HistoryService.get_nft_withdrawals(user_id)
+        market_orders = await HistoryService.get_market_orders(user_id)
 
         return UserHistory(
             deposit_txs=deposits,
             withdrawal_txs=withdrawals,
             swap_txs=swaps,
+            nft_deposits_txs=nft_deposits,
+            nft_withdrawals_txs=nft_withdrawals,
+            market_orders=market_orders,
         )
 
     @staticmethod

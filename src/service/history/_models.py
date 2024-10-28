@@ -1,6 +1,8 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
+
+from src.database import MarketAction
 
 
 class Tx(BaseModel):
@@ -16,7 +18,6 @@ class DepositTx(Tx):
 
 class WithdrawalTx(DepositTx):
     address: str
-    tx_hash: str = Field(serialization_alias='txHash')
 
 
 class SwapTx(Tx):
@@ -25,3 +26,24 @@ class SwapTx(Tx):
     to_token: str = Field(serialization_alias='toToken')
     to_amount: float = Field(serialization_alias='toAmount')
     volume: float
+
+
+class NftDepositTx(Tx):
+    nft_name: str = Field(serialization_alias='nftName')
+    nft_address: str = Field(serialization_alias='nftAddress')
+    tx_hash: str = Field(serialization_alias='txHash')
+
+
+class NftWithdrawalTx(NftDepositTx):
+    address: str
+
+
+class MarketOrder(BaseModel):
+    id: int
+    action: MarketAction
+    nft_name: str = Field(serialization_alias='nftName')
+    nft_address: str = Field(serialization_alias='nftAddress')
+    price: str
+    created_at: datetime = Field(serialization_alias='createdAt')
+
+    model_config = ConfigDict(coerce_numbers_to_str=True)

@@ -165,7 +165,8 @@ async def buy_number(data: BuyNumberRequest):
         or sell_fee < 0
     ):
         raise HTTPException(
-            status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Some server error occurred'
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail='Some server error occurred',
         )
 
     number = await NumberService.get_number(data.number)
@@ -195,6 +196,14 @@ async def buy_number(data: BuyNumberRequest):
         )
 
     owner = await UserService.get_user_wallet(number.owner_id)
+
+    await UserService.add_market_orders(
+        seller_user_id=number.owner_id,
+        buyer_user_id=data.user_id,
+        nft_name=number.number,
+        nft_address=number.address,
+        price=number.price,
+    )
 
     await UserService.update_ton_balance(
         data.user_id, user.ton_balance - (number.price + number.price * buy_fee)
@@ -271,6 +280,14 @@ async def buy_username(data: BuyUsernameRequest):
 
     owner = await UserService.get_user_wallet(username.owner_id)
 
+    await UserService.add_market_orders(
+        seller_user_id=username.owner_id,
+        buyer_user_id=data.user_id,
+        nft_name=username.username,
+        nft_address=username.address,
+        price=username.price,
+    )
+
     await UserService.update_ton_balance(
         data.user_id, user.ton_balance - (username.price + username.price * buy_fee)
     )  # update buyer
@@ -341,6 +358,14 @@ async def instant_sell_number(data: InstantSellNumberRequest):
         raise HTTPException(
             status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Some server error occurred'
         )
+
+    await UserService.add_market_orders(
+        seller_user_id=number.owner_id,
+        buyer_user_id=config.ADMIN_ID,
+        nft_name=number.number,
+        nft_address=number.address,
+        price=instant_sell_price,
+    )
 
     await UserService.update_number_owner(user_id=config.ADMIN_ID, number_id=number.id)
     await UserService.update_ton_balance(

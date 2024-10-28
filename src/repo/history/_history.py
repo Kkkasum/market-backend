@@ -2,7 +2,15 @@ from datetime import datetime
 
 from sqlalchemy import select, insert
 
-from src.database import new_session, UserDeposit, UserWithdrawal, UserSwap
+from src.database import (
+    new_session,
+    UserDeposit,
+    UserWithdrawal,
+    UserNftDeposit,
+    UserNftWithdrawal,
+    UserSwap,
+    MarketOrder,
+)
 
 
 class HistoryRepo:
@@ -34,6 +42,32 @@ class HistoryRepo:
     async def get_swaps(user_id: int) -> list[UserSwap]:
         async with new_session() as session:
             query = select(UserSwap).where(UserSwap.user_id == user_id)
+            res = (await session.execute(query)).scalars().all()
+
+            return res
+
+    @staticmethod
+    async def get_nft_deposits(user_id: int) -> list[UserNftDeposit]:
+        async with new_session() as session:
+            query = select(UserNftDeposit).where(UserNftDeposit.user_id == user_id)
+            res = (await session.execute(query)).scalars().all()
+
+            return res
+
+    @staticmethod
+    async def get_nft_withdrawals(user_id: int) -> list[UserNftWithdrawal]:
+        async with new_session() as session:
+            query = select(UserNftWithdrawal).where(
+                UserNftWithdrawal.user_id == user_id
+            )
+            res = (await session.execute(query)).scalars().all()
+
+            return res
+
+    @staticmethod
+    async def get_market_orders(user_id: int) -> list[MarketOrder]:
+        async with new_session() as session:
+            query = select(MarketOrder).where(MarketOrder.user_id == user_id)
             res = (await session.execute(query)).scalars().all()
 
             return res
@@ -90,6 +124,53 @@ class HistoryRepo:
                 to_amount=to_amount,
                 volume=volume,
             )
+            await session.execute(stmt)
+            await session.commit()
+
+    @staticmethod
+    async def add_nft_deposit(
+        user_id: int, nft_name: str, nft_address: str, tx_hash: str
+    ) -> None:
+        async with new_session() as session:
+            stmt = insert(UserNftDeposit).values(
+                user_id=user_id,
+                nft_name=nft_name,
+                nft_address=nft_address,
+                tx_hash=tx_hash,
+            )
+
+            await session.execute(stmt)
+            await session.commit()
+
+    @staticmethod
+    async def add_nft_withdrawal(
+        user_id: int, nft_name: str, nft_address: str, address: str, tx_hash: str
+    ) -> None:
+        async with new_session() as session:
+            stmt = insert(UserNftWithdrawal).values(
+                user_id=user_id,
+                nft_name=nft_name,
+                nft_address=nft_address,
+                address=address,
+                tx_hash=tx_hash,
+            )
+
+            await session.execute(stmt)
+            await session.commit()
+
+    @staticmethod
+    async def add_market_order(
+        user_id: int, action: str, nft_name: str, nft_address: str, price: float
+    ) -> None:
+        async with new_session() as session:
+            stmt = insert(MarketOrder).values(
+                user_id=user_id,
+                action=action,
+                nft_name=nft_name,
+                nft_address=nft_address,
+                price=price,
+            )
+
             await session.execute(stmt)
             await session.commit()
 

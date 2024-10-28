@@ -1,4 +1,6 @@
-from sqlalchemy import insert, select, update, func
+from datetime import datetime
+
+from sqlalchemy import insert, select, update
 
 from src.database import new_session, StartUtime
 
@@ -20,13 +22,8 @@ class AccountRepo:
             return res
 
     @staticmethod
-    async def update_start_utime() -> None:
+    async def update_start_utime(start_utime: datetime) -> None:
         async with new_session() as session:
-            stmt = (
-                update(StartUtime)
-                .values(
-                    start_utime=func.now()
-                )
-            )
+            stmt = update(StartUtime).values(start_utime=start_utime)
             await session.execute(stmt)
             await session.commit()

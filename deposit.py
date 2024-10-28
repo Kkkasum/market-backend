@@ -1,5 +1,6 @@
 import asyncio
 from time import time
+from datetime import datetime
 
 from src.common import config
 from src.repo.account import AccountRepo
@@ -13,8 +14,8 @@ async def start_subscription():
         if not start_utime:
             await AccountRepo.add_start_utime()
             start_utime = int(time())
-        else:
-            await AccountRepo.update_start_utime()
+
+        new_start_time = datetime.now()
 
         wallet = Wallet(address=config.TON_WALLET_ADDRESS, is_testnet=config.IS_TESTNET)
         account = AccountSubscription(
@@ -27,6 +28,8 @@ async def start_subscription():
         print('Complete checking')
     except Exception:
         return
+    else:
+        await AccountRepo.update_start_utime(new_start_time)
 
 
 async def main():

@@ -1,10 +1,25 @@
 from ._db import Base
 from ._engine import async_session_maker as new_session
 from ._models import (
-    UserStatus, TransactionToken, SwapToken,
-    User, Number, Username, UserAddress, UserNumber, UserUsername,
-    UserDeposit, UserWithdrawal, UserSwap,
-    MarketNumber, MarketUsername,
-    Const, Constant,
-    StartUtime
+    UserStatus,
+    TransactionToken,
+    MarketAction,
+    SwapToken,
+    User,
+    Number,
+    Username,
+    UserAddress,
+    UserNumber,
+    UserUsername,
+    UserDeposit,
+    UserWithdrawal,
+    UserNftDeposit,
+    UserNftWithdrawal,
+    UserSwap,
+    MarketNumber,
+    MarketUsername,
+    MarketOrder,
+    Const,
+    Constant,
+    StartUtime,
 )

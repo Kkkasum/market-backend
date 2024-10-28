@@ -16,6 +16,11 @@ class SwapToken(StrEnum):
     USDT = 'USDT'
 
 
+class MarketAction(StrEnum):
+    BUY = 'BUY'
+    SELL = 'SELL'
+
+
 class Const(StrEnum):
     INSTANT_SELL_PERC = 'INSTANT_SELL_PERC'
     MAX_INSTANT_SELL = 'MAX_INSTANT_SELL'
