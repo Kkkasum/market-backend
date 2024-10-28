@@ -234,8 +234,8 @@ class UserService:
             deposit_txs=deposits,
             withdrawal_txs=withdrawals,
             swap_txs=swaps,
-            nft_deposits_txs=nft_deposits,
-            nft_withdrawals_txs=nft_withdrawals,
+            nft_deposit_txs=nft_deposits,
+            nft_withdrawal_txs=nft_withdrawals,
             market_orders=market_orders,
         )
 

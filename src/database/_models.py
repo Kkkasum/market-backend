@@ -108,7 +108,7 @@ class UserDeposit(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'))
     token: Mapped[TransactionToken]
     amount: Mapped[float]
-    tx_hash: Mapped[str]
+    tx_hash: Mapped[str] = mapped_column(unique=True)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
 
 
@@ -120,7 +120,7 @@ class UserWithdrawal(Base):
     token: Mapped[TransactionToken]
     amount: Mapped[float]
     address: Mapped[str]
-    tx_hash: Mapped[str]
+    tx_hash: Mapped[str] = mapped_column(unique=True)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
 
 
@@ -144,7 +144,7 @@ class UserNftDeposit(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'))
     nft_name: Mapped[str]
     nft_address: Mapped[str]
-    tx_hash: Mapped[str]
+    tx_hash: Mapped[str] = mapped_column(unique=True)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
 
 
@@ -156,7 +156,7 @@ class UserNftWithdrawal(Base):
     nft_name: Mapped[str]
     nft_address: Mapped[str]
     address: Mapped[str]
-    tx_hash: Mapped[str]
+    tx_hash: Mapped[str] = mapped_column(unique=True)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
 
 

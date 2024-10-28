@@ -11,6 +11,10 @@ from src.database import (
     TransactionToken,
     Const,
     Constant,
+    UserNftDeposit,
+    UserNftWithdrawal,
+    MarketOrder,
+    MarketAction,
 )
 
 
@@ -115,13 +119,13 @@ class Fill:
                     user_id=6640542382,
                     token=TransactionToken.USDT,
                     amount=10,
-                    tx_hash='1',
+                    tx_hash='2',
                 ),
                 UserDeposit(
                     user_id=6640542382,
                     token=TransactionToken.USDT,
                     amount=10,
-                    tx_hash='1',
+                    tx_hash='3',
                 ),
             ]
             session.add_all(rows)
@@ -143,14 +147,14 @@ class Fill:
                     token=TransactionToken.USDT,
                     amount=10,
                     address='UQAvR5PPWDccqQ6Zu_UlRizMlFfqa7IMK_5TuRwrEySihbVH',
-                    tx_hash='1',
+                    tx_hash='2',
                 ),
                 UserWithdrawal(
                     user_id=6640542382,
                     token=TransactionToken.USDT,
                     amount=10,
                     address='UQAvR5PPWDccqQ6Zu_UlRizMlFfqa7IMK_5TuRwrEySihbVH',
-                    tx_hash='1',
+                    tx_hash='3',
                 ),
             ]
             session.add_all(rows)
@@ -195,6 +199,70 @@ class Fill:
             session.add_all(rows)
             await session.commit()
 
+    @staticmethod
+    async def add_user_nft_deposits():
+        async with new_session() as session:
+            rows = [
+                UserNftDeposit(
+                    user_id=6640542382,
+                    nft_name='88802726984',
+                    nft_address='EQCu7UaREKnpfwzYBzUs6Aow7aQMz1c1DCPl5fWfE1OTMkuh',
+                    tx_hash='1',
+                ),
+                UserNftDeposit(
+                    user_id=6640542382,
+                    nft_name='buildyourgame',
+                    nft_address='EQB3IRxNI4UiGnORk0eSHYz9D6xsfoWzQZoqnseXdVzU3PYg',
+                    tx_hash='2',
+                ),
+            ]
+            session.add_all(rows)
+            await session.commit()
+
+    @staticmethod
+    async def add_user_nft_withdrawals():
+        async with new_session() as session:
+            rows = [
+                UserNftWithdrawal(
+                    user_id=6640542382,
+                    nft_name='88802726984',
+                    nft_address='EQCu7UaREKnpfwzYBzUs6Aow7aQMz1c1DCPl5fWfE1OTMkuh',
+                    address='EQDcN8gVIikHON6mLNN50NP2e5LIySKvHpkYrTfMh_TrNzFG',
+                    tx_hash='1',
+                ),
+                UserNftWithdrawal(
+                    user_id=6640542382,
+                    nft_name='superhipe',
+                    nft_address='EQAVfzSBSKU8oDY-cz-0RxACzkx6NZ9CNc-JejWmLQcLtywm',
+                    address='EQDcN8gVIikHON6mLNN50NP2e5LIySKvHpkYrTfMh_TrNzFG',
+                    tx_hash='2',
+                ),
+            ]
+            session.add_all(rows)
+            await session.commit()
+
+    @staticmethod
+    async def add_user_market_orders():
+        async with new_session() as session:
+            rows = [
+                MarketOrder(
+                    user_id=6640542382,
+                    action=MarketAction.BUY,
+                    nft_name='kidswallet',
+                    nft_address='EQBqg8_bpc3gVzrerc3gjonZOwXmDYW0jS4WgOdSjORsOAh_',
+                    price=10,
+                ),
+                MarketOrder(
+                    user_id=6640542382,
+                    action=MarketAction.SELL,
+                    nft_name='kidswallet',
+                    nft_address='EQBqg8_bpc3gVzrerc3gjonZOwXmDYW0jS4WgOdSjORsOAh_',
+                    price=15,
+                ),
+            ]
+            session.add_all(rows)
+            await session.commit()
+
     async def all(self):
         await self.add_const()
         await self.add_user()
@@ -205,3 +273,6 @@ class Fill:
         await self.add_user_deposits()
         await self.add_user_withdrawals()
         await self.add_user_swaps()
+        await self.add_user_nft_deposits()
+        await self.add_user_nft_withdrawals()
+        await self.add_user_market_orders()
