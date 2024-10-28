@@ -3,7 +3,6 @@ from typing import AsyncGenerator
 
 import uvicorn
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from src.api import router as api_router
@@ -17,14 +16,6 @@ async def lifespan(_app: FastAPI) -> AsyncGenerator:
 
 
 app = FastAPI(title='Market API', lifespan=lifespan)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=['*'],
-    allow_credentials=True,
-    allow_methods=['GET', 'POST', 'PUT', 'OPTIONS'],
-    allow_headers=['*'],
-)
 
 app.include_router(api_router, prefix='/api')
 
