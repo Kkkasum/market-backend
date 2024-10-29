@@ -1,12 +1,14 @@
-from fastapi import APIRouter, status, HTTPException
+from fastapi import APIRouter, status, HTTPException, Query
 
 from src.common import config
+from src.database import MarketAction
 from src.service.admin import AdminService, Const
 from src.service.market import MarketService
 from src.service.number import NumberService, Status as NumberStatus
 from src.service.user import UserService
 from src.service.username import UsernameService, Status as UsernameStatus
 from ._schemas import (
+    FeeResponse,
     MarketNumbersResponse,
     MarketUsernamesResponse,
     InstantSellPriceResponse,
@@ -18,6 +20,41 @@ from ._schemas import (
 )
 
 router = APIRouter()
+
+
+@router.get(
+    '/fee',
+    responses={
+        status.HTTP_200_OK: {
+            'model': FeeResponse,
+            'description': 'Returns market fee for specified action',
+        },
+        status.HTTP_400_BAD_REQUEST: {'description': 'Specified action is unavailable'},
+        status.HTTP_422_UNPROCESSABLE_ENTITY: {
+            'description': 'Specified action is invalid'
+        },
+    },
+)
+async def get_market_fee(action: MarketAction = Query()):
+    return FeeResponse(fee=1)
+
+    if action == MarketAction.BUY:
+        fee = await AdminService.get_constant(Const.FEE_BUY)
+    elif action == MarketAction.SELL:
+        fee = await AdminService.get_constant(Const.FEE_SELL)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f'Action {action} is invalid',
+        )
+
+    if not fee:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f'Action {action} not found',
+        )
+
+    return FeeResponse(fee=fee)
 
 
 @router.get(

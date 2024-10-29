@@ -3,6 +3,10 @@ from pydantic import BaseModel, Field
 from src.service.market import MarketNumber, MarketUsername
 
 
+class FeeResponse(BaseModel):
+    fee: int
+
+
 class MarketNumbersResponse(BaseModel):
     numbers: list[MarketNumber]
 

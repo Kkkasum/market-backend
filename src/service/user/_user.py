@@ -242,12 +242,16 @@ class UserService:
     @staticmethod
     async def get_user_number_id(user_id: int, number_id: int) -> int | None:
         user_number = await UserRepo.get_user_number(user_id, number_id)
+        if not user_number:
+            return
 
         return user_number.id
 
     @staticmethod
     async def get_user_username_id(user_id: int, username_id: int) -> int | None:
         user_username = await UserRepo.get_user_username(user_id, username_id)
+        if not user_username:
+            return
 
         return user_username.id
 
