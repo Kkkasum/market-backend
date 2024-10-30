@@ -29,8 +29,12 @@ async def start_subscription():
     except Exception as e:
         print(e)
         return
-    else:
+
+    try:
         await AccountRepo.update_start_utime(new_start_time)
+    except Exception as e:
+        print(e)
+        return
 
 
 async def main():
