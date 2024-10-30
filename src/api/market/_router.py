@@ -36,8 +36,6 @@ router = APIRouter()
     },
 )
 async def get_market_fee(action: MarketAction = Query()):
-    return FeeResponse(fee=1)
-
     if action == MarketAction.BUY:
         fee = await AdminService.get_constant(Const.FEE_BUY)
     elif action == MarketAction.SELL:
