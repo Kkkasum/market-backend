@@ -44,7 +44,7 @@ async def get_swap_fee():
 
 
 @router.post(
-    '/swap',
+    '/add',
     responses={
         status.HTTP_201_CREATED: {
             'description': 'Add user swap and update user balance'
@@ -66,9 +66,21 @@ async def add_swap(data: AddSwapRequest):
 
     if data.from_token == 'TON':
         to_token_price = await TokenService.get_ton_to_usdt_price()
-        volume = to_token_price * data.from_amount
+        if not to_token_price:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail='Some server error occurred',
+            )
+
+        volume = to_token_price * float(data.from_amount)
     elif data.from_token == 'USDT':
         to_token_price = await TokenService.get_usdt_to_ton_price()
+        if not to_token_price:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail='Some server error occurred',
+            )
+
         volume = data.from_amount
     else:
         raise HTTPException(
@@ -99,7 +111,7 @@ async def add_swap(data: AddSwapRequest):
         ton_balance=user_wallet.ton_balance,
         usdt_balance=user_wallet.usdt_balance,
         from_token=data.from_token,
-        from_amount=data.from_amount,
+        from_amount=float(data.from_amount),
         to_token=data.to_token,
         to_amount=to_amount - (to_amount * fee / 100),
         volume=volume,

@@ -8,5 +8,5 @@ class FeeResponse(BaseModel):
 class AddSwapRequest(BaseModel):
     user_id: int = Field(validation_alias='userId')
     from_token: str = Field(validation_alias='fromToken')
-    from_amount: float = Field(validation_alias='fromAmount')
+    from_amount: str = Field(validation_alias='fromAmount')
     to_token: str = Field(validation_alias='toToken')
