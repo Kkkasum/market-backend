@@ -78,13 +78,13 @@ async def set_instant_sell_perc(message: types.Message, state: FSMContext):
         await message.answer(text='Введите новое значение')
         return
     else:
-        m = 'Новое значение установлено'
+        await AdminService.set_constant(Const.INSTANT_SELL_PERC, c)
 
         await message.answer(
-            text=m, reply_markup=back_kb(MainCallbackData(page='const'))
+            text='Новое значение установлено',
+            reply_markup=back_kb(MainCallbackData(page='const')),
         )
 
-        await AdminService.set_constant(Const.INSTANT_SELL_PERC, c)
         await state.clear()
 
 
@@ -105,13 +105,13 @@ async def set_max_instant_sell(message: types.Message, state: FSMContext):
         await message.answer(text='Введите новое значение')
         return
     else:
-        m = 'Новое значение установлено'
+        await AdminService.set_constant(Const.MAX_INSTANT_SELL, c)
 
         await message.answer(
-            text=m, reply_markup=back_kb(MainCallbackData(page='const'))
+            text='Новое значение установлено',
+            reply_markup=back_kb(MainCallbackData(page='const')),
         )
 
-        await AdminService.set_constant(Const.MAX_INSTANT_SELL, c)
         await state.clear()
 
 
@@ -132,13 +132,13 @@ async def set_withdrawal_tron(message: types.Message, state: FSMContext):
         await message.answer(text='Введите новое значение')
         return
     else:
-        m = 'Новая комиссия установлена'
+        await AdminService.set_constant(Const.FEE_WITHDRAWAL_TRON, c)
 
         await message.answer(
-            text=m, reply_markup=back_kb(MainCallbackData(page='const'))
+            text='Новая комиссия установлена',
+            reply_markup=back_kb(MainCallbackData(page='const')),
         )
 
-        await AdminService.set_constant(Const.FEE_WITHDRAWAL_TRON, c)
         await state.clear()
 
 
@@ -159,13 +159,13 @@ async def set_withdrawal_ton(message: types.Message, state: FSMContext):
         await message.answer(text='Введите новое значение')
         return
     else:
-        m = 'Новая комиссия установлена'
+        await AdminService.set_constant(Const.FEE_WITHDRAWAL_TON, c)
 
         await message.answer(
-            text=m, reply_markup=back_kb(MainCallbackData(page='const'))
+            text='Новая комиссия установлена',
+            reply_markup=back_kb(MainCallbackData(page='const')),
         )
 
-        await AdminService.set_constant(Const.FEE_WITHDRAWAL_TON, c)
         await state.clear()
 
 
@@ -186,13 +186,13 @@ async def set_swap(message: types.Message, state: FSMContext):
         await message.answer(text='Введите новое значение (в %)')
         return
     else:
-        m = 'Новая комиссия установлена'
+        await AdminService.set_constant(Const.FEE_SWAP, c)
 
         await message.answer(
-            text=m, reply_markup=back_kb(MainCallbackData(page='const'))
+            text='Новая комиссия установлена',
+            reply_markup=back_kb(MainCallbackData(page='const')),
         )
 
-        await AdminService.set_constant(Const.FEE_SWAP, c)
         await state.clear()
 
 
@@ -213,13 +213,13 @@ async def set_buy(message: types.Message, state: FSMContext):
         await message.answer(text='Введите новое значение (в %)')
         return
     else:
-        m = 'Новая комиссия установлено'
+        await AdminService.set_constant(Const.FEE_BUY, c)
 
         await message.answer(
-            text=m, reply_markup=back_kb(MainCallbackData(page='const'))
+            text='Новая комиссия установлено',
+            reply_markup=back_kb(MainCallbackData(page='const')),
         )
 
-        await AdminService.set_constant(Const.FEE_BUY, c)
         await state.clear()
 
 
@@ -240,11 +240,11 @@ async def set_sell(message: types.Message, state: FSMContext):
         await message.answer(text='Введите новое значение (в %)')
         return
     else:
-        m = 'Новая комиссия установлено'
+        await AdminService.set_constant(Const.FEE_SELL, c)
 
         await message.answer(
-            text=m, reply_markup=back_kb(MainCallbackData(page='const'))
+            text='Новая комиссия установлено',
+            reply_markup=back_kb(MainCallbackData(page='const')),
         )
 
-        await AdminService.set_constant(Const.FEE_SELL, c)
         await state.clear()

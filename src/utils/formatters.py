@@ -2,7 +2,7 @@ from src.service.user import User
 
 
 def format_const(const: float, extra: str) -> str:
-    m = f'Текущая значение: <b>{const}</b>{extra}'
+    m = f'Текущее значение: <b>{const}</b>{extra}'
 
     return m
 
