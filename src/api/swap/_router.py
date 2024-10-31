@@ -114,5 +114,5 @@ async def add_swap(data: AddSwapRequest):
         from_amount=float(data.from_amount),
         to_token=data.to_token,
         to_amount=to_amount - (to_amount * fee / 100),
-        volume=volume,
+        volume=float(volume),
     )
