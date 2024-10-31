@@ -94,6 +94,7 @@ async def add_swap(data: AddSwapRequest):
             status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Some server error occurred'
         )
 
+    print(data.from_amount, to_token_price)
     to_amount = data.from_amount * to_token_price
 
     admin_wallet = await UserService.get_user_wallet(user_id=config.ADMIN_ID)
