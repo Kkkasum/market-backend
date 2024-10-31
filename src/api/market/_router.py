@@ -283,7 +283,6 @@ async def buy_username(data: BuyUsernameRequest):
         or buy_fee < 0
         or sell_fee < 0
     ):
-        print(buy_fee, sell_fee)
         raise HTTPException(
             status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Some server error occurred'
         )
