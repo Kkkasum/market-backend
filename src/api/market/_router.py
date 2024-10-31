@@ -406,6 +406,10 @@ async def instant_sell_number(data: InstantSellNumberRequest):
     await UserService.update_ton_balance(
         user_id=data.user_id, new_ton_balance=user.ton_balance + instant_sell_price
     )
+    await UserService.update_ton_balance(
+        user_id=config.ADMIN_ID,
+        new_ton_balance=admin_wallet.ton_balance - instant_sell_price,
+    )
 
 
 @router.put(
