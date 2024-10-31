@@ -328,7 +328,7 @@ async def buy_username(data: BuyUsernameRequest):
     )  # update buyer
     await UserService.update_ton_balance(
         username.owner_id,
-        owner.ton_balance - (username.price + username.price * sell_fee),
+        owner.ton_balance + (username.price - username.price * sell_fee),
     )  # update owner
 
     res = await UserService.update_username_owner(data.user_id, username.id)
