@@ -264,6 +264,12 @@ class UserService:
         await UserRepo.update_ton_balance(user_id, new_ton_balance)
 
     @staticmethod
+    async def update_balance(
+        user_id: int, new_ton_balance: float, new_usdt_balance
+    ) -> None:
+        await UserRepo.update_user_balance(user_id, new_ton_balance, new_usdt_balance)
+
+    @staticmethod
     async def update_number_owner(user_id: int, number_id: int) -> int:
         return await UserRepo.update_number_owner(user_id, number_id)
 

@@ -95,6 +95,7 @@ async def add_swap(data: AddSwapRequest):
         )
 
     to_amount = float(data.from_amount) * to_token_price
+    to_amount -= to_amount * fee / 100
 
     admin_wallet = await UserService.get_user_wallet(user_id=config.ADMIN_ID)
     if data.from_token == 'TON' and admin_wallet.usdt_balance < to_amount:
@@ -113,6 +114,19 @@ async def add_swap(data: AddSwapRequest):
         from_token=data.from_token,
         from_amount=float(data.from_amount),
         to_token=data.to_token,
-        to_amount=to_amount - (to_amount * fee / 100),
+        to_amount=to_amount,
         volume=float(volume),
     )
+
+    if data.from_token == 'TON':
+        await UserService.update_balance(
+            user_id=config.ADMIN_ID,
+            new_ton_balance=admin_wallet.ton_balance + float(data.from_amount),
+            new_usdt_balance=admin_wallet.usdt_balance - to_amount,
+        )
+    elif data.from_token == 'USDT':
+        await UserService.update_balance(
+            user_id=config.ADMIN_ID,
+            new_ton_balance=admin_wallet.ton_balance - to_amount,
+            new_usdt_balance=admin_wallet.usdt_balance + float(data.from_amount),
+        )
