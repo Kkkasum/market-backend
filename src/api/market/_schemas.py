@@ -16,7 +16,7 @@ class MarketUsernamesResponse(BaseModel):
 
 
 class InstantSellPriceResponse(BaseModel):
-    price: str
+    price: int
 
 
 class AddMarketNumberRequest(BaseModel):

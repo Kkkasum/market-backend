@@ -1,3 +1,5 @@
+from math import floor
+
 from fastapi import APIRouter, status, HTTPException, Query
 
 from src.common import config
@@ -127,7 +129,7 @@ async def get_instant_sell_number_price():
             detail='Service is unavailable. Perc is not set',
         )
 
-    instant_sell_price = price * instant_sell_perc / 100
+    instant_sell_price = floor(price * instant_sell_perc / 100)
 
     max_instant_sell_price = await AdminService.get_constant(Const.MAX_INSTANT_SELL)
     if instant_sell_price > max_instant_sell_price:
@@ -136,7 +138,7 @@ async def get_instant_sell_number_price():
             detail='Service is unavailable. Price is more than max',
         )
 
-    return InstantSellPriceResponse(price=str(instant_sell_price))
+    return InstantSellPriceResponse(price=instant_sell_price)
 
 
 @router.post(
