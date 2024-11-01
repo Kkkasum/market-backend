@@ -109,6 +109,7 @@ async def get_usernames():
         status.HTTP_500_INTERNAL_SERVER_ERROR: {
             'description': 'Some server error occurred'
         },
+        status.HTTP_503_SERVICE_UNAVAILABLE: {'description': 'Service is unavailable'},
     },
 )
 async def get_instant_sell_number_price():
@@ -120,7 +121,20 @@ async def get_instant_sell_number_price():
         )
 
     instant_sell_perc = await AdminService.get_constant(Const.INSTANT_SELL_PERC)
+    if not instant_sell_perc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail='Service is unavailable. Perc is not set',
+        )
+
     instant_sell_price = price * instant_sell_perc / 100
+
+    max_instant_sell_price = await AdminService.get_constant(Const.MAX_INSTANT_SELL)
+    if instant_sell_price > max_instant_sell_price:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail='Service is unavailable. Price is more than max',
+        )
 
     return InstantSellPriceResponse(price=str(instant_sell_price))
 
