@@ -120,7 +120,7 @@ async def get_instant_sell_number_price():
         )
 
     instant_sell_perc = await AdminService.get_constant(Const.INSTANT_SELL_PERC)
-    instant_sell_price = price - (price / 100 * instant_sell_perc)
+    instant_sell_price = price * instant_sell_perc / 100
 
     return InstantSellPriceResponse(price=str(instant_sell_price))
 
