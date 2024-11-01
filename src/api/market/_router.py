@@ -357,12 +357,16 @@ async def buy_username(data: BuyUsernameRequest):
         status.HTTP_201_CREATED: {
             'description': 'Instant sells number for specified user'
         },
+        status.HTTP_400_BAD_REQUEST: {
+            'description': 'Price in request is not equal to updated one'
+        },
         status.HTTP_405_METHOD_NOT_ALLOWED: {
             'description': 'Specified number is not assigned to specified user'
         },
         status.HTTP_500_INTERNAL_SERVER_ERROR: {
             'description': 'Some server error occurred'
         },
+        status.HTTP_503_SERVICE_UNAVAILABLE: {'description': 'Service is unavailable'},
     },
     status_code=status.HTTP_201_CREATED,
 )
@@ -395,19 +399,32 @@ async def instant_sell_number(data: InstantSellNumberRequest):
         )
 
     instant_sell_perc = await AdminService.get_constant(Const.INSTANT_SELL_PERC)
-    instant_sell_price = price - (price / 100 * instant_sell_perc)
+    if not instant_sell_perc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail='Service is unavailable. Perc is not set',
+        )
+
+    instant_sell_price = floor(price * instant_sell_perc / 100)
+
+    if instant_sell_price != data.price:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Price in request is not equal to updated one',
+        )
 
     max_instant_sell_price = await AdminService.get_constant(Const.MAX_INSTANT_SELL)
     if instant_sell_price > max_instant_sell_price:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Some server error occurred',
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail='Service is unavailable. Price is more than max',
         )
 
     admin_wallet = await UserService.get_user_wallet(user_id=config.ADMIN_ID)
     if admin_wallet.ton_balance < instant_sell_price:
         raise HTTPException(
-            status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Some server error occurred'
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail='Service is unavailable. Price is more than max',
         )
 
     await UserService.add_market_orders(

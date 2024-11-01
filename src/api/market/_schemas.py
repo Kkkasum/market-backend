@@ -44,4 +44,4 @@ class BuyUsernameRequest(BaseModel):
 
 
 class InstantSellNumberRequest(BuyNumberRequest):
-    pass
+    price: int
