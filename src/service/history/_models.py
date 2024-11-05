@@ -28,6 +28,16 @@ class SwapTx(Tx):
     volume: float
 
 
+class RubDepositTx(Tx):
+    personal_id: str = Field(exclude=True)
+    onlypays_id: str = Field(exclude=True)
+    user_id: int = Field(serialization_alias='userId')
+    payment_type: str = Field(serialization_alias='paymentType')
+    status: str = Field(exclude=True)
+    amount_rub: int | None = Field(default=None, serialization_alias='amountRub')
+    amount_usdt: float | None = Field(default=None, serialization_alias='amountUsdt')
+
+
 class NftDepositTx(Tx):
     nft_name: str = Field(serialization_alias='nftName')
     nft_address: str = Field(serialization_alias='nftAddress')
@@ -47,15 +57,3 @@ class MarketOrder(BaseModel):
     created_at: datetime = Field(serialization_alias='createdAt')
 
     model_config = ConfigDict(coerce_numbers_to_str=True)
-
-
-class RubDeposit(BaseModel):
-    id: int
-    personal_id: str
-    onlypays_id: str
-    user_id: int
-    payment_type: str
-    status: str
-    amount_rub: int | None = None
-    amount_usdt: float | None = None
-    created_at: datetime

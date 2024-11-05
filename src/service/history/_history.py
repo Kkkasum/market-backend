@@ -8,7 +8,7 @@ from ._models import (
     NftDepositTx,
     NftWithdrawalTx,
     MarketOrder,
-    RubDeposit,
+    RubDepositTx,
 )
 
 
@@ -60,6 +60,27 @@ class HistoryService:
         return [SwapTx.model_validate(swap, from_attributes=True) for swap in swaps]
 
     @staticmethod
+    async def get_succeed_rub_deposits(user_id: int) -> list[RubDepositTx] | None:
+        deposits = await HistoryRepo.get_succeed_rub_deposits(user_id)
+        if not deposits:
+            return
+
+        return [
+            RubDepositTx.model_validate(deposit, from_attributes=True)
+            for deposit in deposits
+        ]
+
+    @staticmethod
+    async def get_rub_deposit(
+        personal_id: str, onlypays_id: str
+    ) -> RubDepositTx | None:
+        rub_deposit = await HistoryRepo.get_rub_deposit(personal_id, onlypays_id)
+        if not rub_deposit:
+            return
+
+        return RubDepositTx.model_validate(rub_deposit, from_attributes=True)
+
+    @staticmethod
     async def get_nft_deposits(user_id: int) -> list[NftDepositTx] | None:
         nft_deposits = await HistoryRepo.get_nft_deposits(user_id)
         if not nft_deposits:
@@ -91,14 +112,6 @@ class HistoryService:
             MarketOrder.model_validate(market_order, from_attributes=True)
             for market_order in market_orders
         ]
-
-    @staticmethod
-    async def get_rub_deposit(personal_id: str, onlypays_id: str) -> RubDeposit | None:
-        rub_deposit = await HistoryRepo.get_rub_deposit(personal_id, onlypays_id)
-        if not rub_deposit:
-            return
-
-        return RubDeposit.model_validate(rub_deposit, from_attributes=True)
 
     @staticmethod
     async def get_stats(

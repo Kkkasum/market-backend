@@ -222,6 +222,7 @@ class UserService:
         deposits = await HistoryService.get_deposits(user_id)
         withdrawals = await HistoryService.get_withdrawals(user_id)
         swaps = await HistoryService.get_swaps(user_id)
+        rub_deposits = await HistoryService.get_succeed_rub_deposits(user_id)
         nft_deposits = await HistoryService.get_nft_deposits(user_id)
         nft_withdrawals = await HistoryService.get_nft_withdrawals(user_id)
         market_orders = await HistoryService.get_market_orders(user_id)
@@ -230,6 +231,7 @@ class UserService:
             deposit_txs=deposits,
             withdrawal_txs=withdrawals,
             swap_txs=swaps,
+            rub_deposit_txs=rub_deposits,
             nft_deposit_txs=nft_deposits,
             nft_withdrawal_txs=nft_withdrawals,
             market_orders=market_orders,

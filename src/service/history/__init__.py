@@ -3,6 +3,7 @@ from ._history import (
     DepositTx,
     WithdrawalTx,
     SwapTx,
+    RubDepositTx,
     NftDepositTx,
     NftWithdrawalTx,
     MarketOrder,

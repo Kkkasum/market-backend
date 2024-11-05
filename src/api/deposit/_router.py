@@ -1,4 +1,5 @@
 from hashlib import md5 as sha256
+from math import floor
 from time import time
 
 from fastapi import APIRouter, status, HTTPException, Query
@@ -175,13 +176,17 @@ async def add_rub_deposit(data: DepositRubRequest):
     if data.received_sum < MIN_RUB_DEPOSIT:
         return
 
+    fee = await AdminService.get_constant(Const.FEE_RUB_DEPOSIT)
+    if not fee:
+        return
+
     rub_deposit = await HistoryService.get_rub_deposit(
         personal_id=data.personal_id, onlypays_id=data.onlypays_id
     )
     if not rub_deposit:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'Personal ID {data.personal_id} not found',
+            detail=f'Order #{data.onlypays_id} ({data.personal_id}) not found',
         )
 
     usdt_to_rub_price = await TokenService.get_usdt_to_rub_price()
@@ -192,6 +197,8 @@ async def add_rub_deposit(data: DepositRubRequest):
         )
 
     amount_usdt = data.received_sum * usdt_to_rub_price
+    amount_usdt -= amount_usdt * fee / 100
+    amount_usdt = floor(amount_usdt * 10**2) / 10**2
 
     await HistoryService.update_rub_deposit(
         id=rub_deposit.id,

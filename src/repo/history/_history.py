@@ -16,7 +16,7 @@ from src.database import (
 
 class HistoryRepo:
     @staticmethod
-    async def get_deposits(user_id: int) -> list[UserDeposit]:
+    async def get_deposits(user_id: int) -> list[UserDeposit] | None:
         async with new_session() as session:
             query = select(UserDeposit).where(UserDeposit.user_id == user_id)
             res = (await session.execute(query)).scalars().all()
@@ -40,7 +40,7 @@ class HistoryRepo:
             return res
 
     @staticmethod
-    async def get_withdrawals(user_id: int) -> list[UserWithdrawal]:
+    async def get_withdrawals(user_id: int) -> list[UserWithdrawal] | None:
         async with new_session() as session:
             query = select(UserWithdrawal).where(UserWithdrawal.user_id == user_id)
             res = (await session.execute(query)).scalars().all()
@@ -48,7 +48,7 @@ class HistoryRepo:
             return res
 
     @staticmethod
-    async def get_swaps(user_id: int) -> list[UserSwap]:
+    async def get_swaps(user_id: int) -> list[UserSwap] | None:
         async with new_session() as session:
             query = select(UserSwap).where(UserSwap.user_id == user_id)
             res = (await session.execute(query)).scalars().all()
@@ -56,27 +56,11 @@ class HistoryRepo:
             return res
 
     @staticmethod
-    async def get_nft_deposits(user_id: int) -> list[UserNftDeposit]:
+    async def get_succeed_rub_deposits(user_id: int) -> list[UserRubDeposit] | None:
         async with new_session() as session:
-            query = select(UserNftDeposit).where(UserNftDeposit.user_id == user_id)
-            res = (await session.execute(query)).scalars().all()
-
-            return res
-
-    @staticmethod
-    async def get_nft_withdrawals(user_id: int) -> list[UserNftWithdrawal]:
-        async with new_session() as session:
-            query = select(UserNftWithdrawal).where(
-                UserNftWithdrawal.user_id == user_id
+            query = select(UserRubDeposit).where(
+                UserRubDeposit.user_id == user_id, UserRubDeposit.status == 'SUCCESS'
             )
-            res = (await session.execute(query)).scalars().all()
-
-            return res
-
-    @staticmethod
-    async def get_market_orders(user_id: int) -> list[MarketOrder]:
-        async with new_session() as session:
-            query = select(MarketOrder).where(MarketOrder.user_id == user_id)
             res = (await session.execute(query)).scalars().all()
 
             return res
@@ -91,6 +75,32 @@ class HistoryRepo:
                 UserRubDeposit.onlypays_id == onlypays_id,
             )
             res = (await session.execute(query)).scalar_one_or_none()
+
+            return res
+
+    @staticmethod
+    async def get_nft_deposits(user_id: int) -> list[UserNftDeposit] | None:
+        async with new_session() as session:
+            query = select(UserNftDeposit).where(UserNftDeposit.user_id == user_id)
+            res = (await session.execute(query)).scalars().all()
+
+            return res
+
+    @staticmethod
+    async def get_nft_withdrawals(user_id: int) -> list[UserNftWithdrawal] | None:
+        async with new_session() as session:
+            query = select(UserNftWithdrawal).where(
+                UserNftWithdrawal.user_id == user_id
+            )
+            res = (await session.execute(query)).scalars().all()
+
+            return res
+
+    @staticmethod
+    async def get_market_orders(user_id: int) -> list[MarketOrder] | None:
+        async with new_session() as session:
+            query = select(MarketOrder).where(MarketOrder.user_id == user_id)
+            res = (await session.execute(query)).scalars().all()
 
             return res
 

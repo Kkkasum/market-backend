@@ -4,6 +4,7 @@ from src.service.history import (
     DepositTx,
     WithdrawalTx,
     SwapTx,
+    RubDepositTx,
     NftDepositTx,
     NftWithdrawalTx,
     MarketOrder,
@@ -29,6 +30,9 @@ class UserHistory(BaseModel):
         serialization_alias='withdrawalTxs'
     )
     swap_txs: list[SwapTx] | None = Field(serialization_alias='swapTxs')
+    rub_deposit_txs: list[RubDepositTx] | None = Field(
+        serialization_alias='rubDepositTxs'
+    )
     nft_deposit_txs: list[NftDepositTx] | None = Field(
         serialization_alias='nftDepositTxs'
     )
