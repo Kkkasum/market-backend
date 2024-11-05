@@ -115,6 +115,33 @@ async def set_max_instant_sell(message: types.Message, state: FSMContext):
         await state.clear()
 
 
+@router.message(StateFilter(Const.FEE_RUB_DEPOSIT))
+async def set_rub_deposit(message: types.Message, state: FSMContext):
+    try:
+        c = int(message.text)
+        if c > 100 or c < 0:
+            m = 'Неправильное значение (должно быть числом < 100 и > 0)'
+
+            await message.answer(text=m)
+            await message.answer(text='Введите новое значение (в %)')
+            return
+    except ValueError:
+        m = 'Неправильное значение (должно быть числом < 100 и > 0)'
+
+        await message.answer(text=m)
+        await message.answer(text='Введите новое значение (в %)')
+        return
+    else:
+        await AdminService.set_constant(Const.FEE_RUB_DEPOSIT, c)
+
+        await message.answer(
+            text='Новая комиссия установлено',
+            reply_markup=back_kb(MainCallbackData(page='const')),
+        )
+
+        await state.clear()
+
+
 @router.message(StateFilter(Const.FEE_WITHDRAWAL_TRON))
 async def set_withdrawal_tron(message: types.Message, state: FSMContext):
     try:

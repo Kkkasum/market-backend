@@ -2,6 +2,7 @@ import aiohttp
 from pytoniq_core import Address
 
 from src.common import config
+from ._models import Requisite
 
 
 class DepositService:
@@ -30,3 +31,29 @@ class DepositService:
                 res = await resp.json()
 
                 return res['address']
+
+    @staticmethod
+    async def get_deposit_rub_requisite(
+        amount: int, payment_type: str, personal_id: str
+    ) -> Requisite | None:
+        url = 'https://onlypays.org/get_requisite'
+        json = {
+            'api_id': config.ONLYPAYS_API_ID,
+            'secret_key': config.ONLYPAYS_SECRET_KEY,
+            'amount_rub': amount,
+            'payment_type': payment_type,
+            'personal_id': personal_id,
+        }
+
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, json=json) as resp:
+                if resp.status != 200:
+                    return
+
+                res = await resp.json()
+
+                is_success = res['success']
+                if not is_success:
+                    return
+
+                return Requisite.model_validate(res['data'], from_attributes=True)

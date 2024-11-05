@@ -1,1 +1,1 @@
-from ._deposit import DepositService
+from ._deposit import DepositService, Requisite

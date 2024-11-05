@@ -30,13 +30,9 @@ class UserService:
         await HistoryService.add_deposit(user_id, token, amount, tx_hash, created_at)
 
         if token == 'TON':
-            await UserRepo.update_user_balance(
-                user_id, ton_balance + amount, usdt_balance
-            )
+            await UserRepo.update_ton_balance(user_id, ton_balance + amount)
         else:
-            await UserRepo.update_user_balance(
-                user_id, ton_balance, usdt_balance + amount
-            )
+            await UserRepo.update_usdt_balance(user_id, usdt_balance + amount)
 
     @staticmethod
     async def add_withdrawal(
@@ -262,6 +258,10 @@ class UserService:
     @staticmethod
     async def update_ton_balance(user_id: int, new_ton_balance: float) -> None:
         await UserRepo.update_ton_balance(user_id, new_ton_balance)
+
+    @staticmethod
+    async def update_usdt_balance(user_id: int, new_usdt_balance: float) -> None:
+        await UserRepo.update_usdt_balance(user_id, new_usdt_balance)
 
     @staticmethod
     async def update_balance(

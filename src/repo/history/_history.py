@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, update
 
 from src.database import (
     new_session,
@@ -10,6 +10,7 @@ from src.database import (
     UserNftWithdrawal,
     UserSwap,
     MarketOrder,
+    UserRubDeposit,
 )
 
 
@@ -77,6 +78,19 @@ class HistoryRepo:
         async with new_session() as session:
             query = select(MarketOrder).where(MarketOrder.user_id == user_id)
             res = (await session.execute(query)).scalars().all()
+
+            return res
+
+    @staticmethod
+    async def get_rub_deposit(
+        personal_id: str, onlypays_id: str
+    ) -> UserRubDeposit | None:
+        async with new_session() as session:
+            query = select(UserRubDeposit).where(
+                UserRubDeposit.personal_id == personal_id,
+                UserRubDeposit.onlypays_id == onlypays_id,
+            )
+            res = (await session.execute(query)).scalar_one_or_none()
 
             return res
 
@@ -177,6 +191,35 @@ class HistoryRepo:
                 nft_name=nft_name,
                 nft_address=nft_address,
                 price=price,
+            )
+
+            await session.execute(stmt)
+            await session.commit()
+
+    @staticmethod
+    async def add_rub_deposit(
+        user_id: int, personal_id: str, onlypays_id: str, payment_type: str
+    ) -> None:
+        async with new_session() as session:
+            stmt = insert(UserRubDeposit).values(
+                user_id=user_id,
+                personal_id=personal_id,
+                onlypays_id=onlypays_id,
+                payment_type=payment_type,
+            )
+
+            await session.execute(stmt)
+            await session.commit()
+
+    @staticmethod
+    async def update_rub_deposit(
+        id: int, status: str, amount_rub: int, amount_usdt: float
+    ) -> None:
+        async with new_session() as session:
+            stmt = (
+                update(UserRubDeposit)
+                .where(UserRubDeposit.id == id)
+                .values(status=status, amount_rub=amount_rub, amount_usdt=amount_usdt)
             )
 
             await session.execute(stmt)

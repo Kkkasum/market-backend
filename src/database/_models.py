@@ -8,6 +8,8 @@ from ._db import Base
 from ._enums import (
     UserStatus,
     TransactionToken,
+    PaymentType,
+    DepositStatus,
     SwapToken,
     MarketAction,
     Const,
@@ -157,6 +159,21 @@ class UserNftWithdrawal(Base):
     nft_address: Mapped[str]
     address: Mapped[str]
     tx_hash: Mapped[str] = mapped_column(unique=True)
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
+
+
+class UserRubDeposit(Base):
+    __tablename__ = 'users_rub_deposits'
+    __table_args__ = (UniqueConstraint('personal_id', 'onlypays_id'),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    personal_id: Mapped[str] = mapped_column(String(64))
+    onlypays_id: Mapped[str]
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'))
+    payment_type: Mapped[PaymentType]
+    status: Mapped[DepositStatus] = mapped_column(default=DepositStatus.WAITING)
+    amount_rub: Mapped[int | None]
+    amount_usdt: Mapped[float | None]
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
 
 

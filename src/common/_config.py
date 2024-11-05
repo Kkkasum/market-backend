@@ -14,6 +14,9 @@ class Config(BaseSettings):
     CMC_API_KEY: str
     B2B_API_KEY: str
 
+    ONLYPAYS_API_ID: str
+    ONLYPAYS_SECRET_KEY: str
+
     MNEMONICS: str
     TON_WALLET_ADDRESS: str
 

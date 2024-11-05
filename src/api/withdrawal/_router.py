@@ -36,13 +36,8 @@ router = APIRouter()
 async def get_fee(network: Network = Query()):
     if network == Network.TRON:
         fee = await AdminService.get_constant(Const.FEE_WITHDRAWAL_TRON)
-    elif network == Network.TON:
-        fee = await AdminService.get_constant(Const.FEE_WITHDRAWAL_TON)
     else:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f'Network {network} is invalid',
-        )
+        fee = await AdminService.get_constant(Const.FEE_WITHDRAWAL_TON)
 
     if not fee:
         raise HTTPException(

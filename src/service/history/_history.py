@@ -8,6 +8,7 @@ from ._models import (
     NftDepositTx,
     NftWithdrawalTx,
     MarketOrder,
+    RubDeposit,
 )
 
 
@@ -92,6 +93,14 @@ class HistoryService:
         ]
 
     @staticmethod
+    async def get_rub_deposit(personal_id: str, onlypays_id: str) -> RubDeposit | None:
+        rub_deposit = await HistoryRepo.get_rub_deposit(personal_id, onlypays_id)
+        if not rub_deposit:
+            return
+
+        return RubDeposit.model_validate(rub_deposit, from_attributes=True)
+
+    @staticmethod
     async def get_stats(
         start_time: datetime | None = None, end_time: datetime | None = None
     ) -> tuple[int, int, int]:
@@ -151,3 +160,17 @@ class HistoryService:
         await HistoryRepo.add_market_order(
             user_id, action, nft_name, nft_address, price
         )
+
+    @staticmethod
+    async def add_rub_deposit(
+        user_id: int, personal_id: str, onlypays_id: str, payment_type: str
+    ):
+        await HistoryRepo.add_rub_deposit(
+            user_id, personal_id, onlypays_id, payment_type
+        )
+
+    @staticmethod
+    async def update_rub_deposit(
+        id: int, status: str, amount_rub: int, amount_usdt: float
+    ) -> None:
+        await HistoryRepo.update_rub_deposit(id, status, amount_rub, amount_usdt)

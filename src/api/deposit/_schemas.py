@@ -5,6 +5,13 @@ class DepositAddressResponse(BaseModel):
     deposit_address: str = Field(serialization_alias='depositAddress')
 
 
+class RequisiteResponse(BaseModel):
+    fee: str
+    requisite: str
+    owner: str
+    bank: str
+
+
 class DepositTronRequest(BaseModel):
     id: str
     category: str
@@ -17,3 +24,10 @@ class DepositTronRequest(BaseModel):
     tx_id: str
     created_at: int
     explorer_link: str
+
+
+class DepositRubRequest(BaseModel):
+    onlypays_id: str = Field(validation_alias='id')
+    status: str
+    personal_id: str
+    received_sum: int

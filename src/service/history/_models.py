@@ -47,3 +47,15 @@ class MarketOrder(BaseModel):
     created_at: datetime = Field(serialization_alias='createdAt')
 
     model_config = ConfigDict(coerce_numbers_to_str=True)
+
+
+class RubDeposit(BaseModel):
+    id: int
+    personal_id: str
+    onlypays_id: str
+    user_id: int
+    payment_type: str
+    status: str
+    amount_rub: int | None = None
+    amount_usdt: float | None = None
+    created_at: datetime
