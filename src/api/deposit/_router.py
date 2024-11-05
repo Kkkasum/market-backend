@@ -172,6 +172,9 @@ async def add_tron_deposit(user_id: int, data: DepositTronRequest):
     status_code=status.HTTP_201_CREATED,
 )
 async def add_rub_deposit(data: DepositRubRequest):
+    if data.received_sum < MIN_RUB_DEPOSIT:
+        return
+
     rub_deposit = await HistoryService.get_rub_deposit(
         personal_id=data.personal_id, onlypays_id=data.onlypays_id
     )
